@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   ReactFlow,
   addEdge,
@@ -232,7 +232,7 @@ const WorkflowBuilder = () => {
   // Update nodes state with all nodes
   useEffect(() => {
     setNodes(allNodes);
-  }, [entitiesExpanded, selectedEntity]);
+  }, [entitiesExpanded, selectedEntity, setNodes]);
 
   return (
     <div className="flex h-screen bg-gray-50">
