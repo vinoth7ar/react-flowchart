@@ -35,36 +35,38 @@ const initialNodes: Node[] = [
       type: 'workflow',
       items: ['Hypo Loan Position', 'Loan Commitment', 'Hypo Loan Base Price'],
     } as WorkflowNodeData,
-    style: { width: 500, height: 350 },
+    style: { width: 550, height: 400 },
   },
   {
     id: 'stage-node',
     type: 'stage',
-    position: { x: 150, y: 170 },
+    position: { x: 40, y: 120 },
     data: {
       title: 'Stage',
-      description: 'ELIME stages commitment data in PMF database',
+      description: 'FLUME stages commitment data in PMF database',
       type: 'stage',
     } as WorkflowNodeData,
     parentId: 'main-workflow',
     extent: 'parent',
+    style: { width: 200, height: 100 },
   },
   {
     id: 'enrich-node',
     type: 'stage',
-    position: { x: 350, y: 170 },
+    position: { x: 300, y: 120 },
     data: {
       title: 'Enrich',
-      description: 'PMF enriches hypo loan positions',
+      description: 'PMF enriches hypo loan positions.',
       type: 'stage',
     } as WorkflowNodeData,
     parentId: 'main-workflow',
     extent: 'parent',
+    style: { width: 200, height: 100 },
   },
   {
     id: 'staged-circle',
     type: 'circular',
-    position: { x: 200, y: 250 },
+    position: { x: 120, y: 240 },
     data: {
       label: 'staged',
     } as CircularNodeData,
@@ -74,7 +76,7 @@ const initialNodes: Node[] = [
   {
     id: 'position-circle',
     type: 'circular',
-    position: { x: 400, y: 250 },
+    position: { x: 380, y: 240 },
     data: {
       label: 'position created',
     } as CircularNodeData,
@@ -88,19 +90,22 @@ const initialEdges: Edge[] = [
     id: 'stage-to-staged',
     source: 'stage-node',
     target: 'staged-circle',
-    style: { stroke: '#6366f1', strokeWidth: 2 },
+    style: { stroke: 'hsl(var(--foreground))', strokeWidth: 2 },
+    type: 'straight',
   },
   {
     id: 'enrich-to-position',
     source: 'enrich-node',
     target: 'position-circle',
-    style: { stroke: '#6366f1', strokeWidth: 2 },
+    style: { stroke: 'hsl(var(--foreground))', strokeWidth: 2 },
+    type: 'straight',
   },
   {
     id: 'staged-to-enrich',
     source: 'staged-circle',
     target: 'enrich-node',
-    style: { stroke: '#6366f1', strokeWidth: 2 },
+    style: { stroke: 'hsl(var(--foreground))', strokeWidth: 2 },
+    type: 'straight',
   },
 ];
 
@@ -126,18 +131,21 @@ const WorkflowBuilder = () => {
           nodeTypes={nodeTypes}
           fitView
           className="bg-workflow-canvas"
-          defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+          defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
+          nodesDraggable={true}
+          nodesConnectable={true}
+          elementsSelectable={true}
         >
           <Background 
             color="hsl(var(--workflow-border))" 
-            gap={20}
+            gap={25}
             size={1}
           />
-          <Controls className="bg-workflow-node-bg border-workflow-border" />
+          <Controls className="bg-workflow-node-bg border-workflow-border shadow-lg" />
           <MiniMap 
-            className="bg-workflow-node-bg border-workflow-border"
-            nodeColor="hsl(var(--primary))"
-            maskColor="hsl(var(--workflow-bg) / 0.8)"
+            className="bg-workflow-node-bg border-workflow-border shadow-lg"
+            nodeColor="hsl(var(--workflow-border))"
+            maskColor="hsl(var(--workflow-bg) / 0.9)"
           />
         </ReactFlow>
       </div>

@@ -13,11 +13,11 @@ const WorkflowNode = ({ data }: NodeProps) => {
   const getNodeStyles = () => {
     switch (nodeData.type) {
       case 'workflow':
-        return 'bg-workflow-node-bg border-workflow-node-border border-2 rounded-lg min-w-[400px] min-h-[300px] p-4';
+        return 'bg-workflow-main-bg border-workflow-main-border border-2 rounded-none min-w-[500px] min-h-[350px] p-6';
       case 'stage':
-        return 'bg-workflow-stage-bg border-workflow-stage-border border rounded p-3 min-w-[150px]';
+        return 'bg-workflow-stage-bg border-workflow-stage-border border-2 rounded-none p-4 min-w-[180px] min-h-[80px]';
       case 'data':
-        return 'bg-workflow-data-bg border-workflow-data-border border rounded p-2 min-w-[120px]';
+        return 'bg-workflow-data-bg border-workflow-data-border border rounded-sm px-3 py-2 text-sm font-medium';
       case 'process':
         return 'bg-workflow-process-bg text-workflow-process-text border-workflow-stage-border border rounded px-3 py-1 text-sm font-medium';
       default:
@@ -28,65 +28,67 @@ const WorkflowNode = ({ data }: NodeProps) => {
   if (nodeData.type === 'workflow') {
     return (
       <div className={getNodeStyles()}>
-        <div className="flex items-center gap-2 mb-4">
-          <div className="bg-foreground text-background px-2 py-1 rounded text-xs font-medium">
+        <div className="flex items-start gap-3 mb-6">
+          <div className="bg-workflow-pmf-bg text-workflow-pmf-text px-3 py-1 rounded-none text-sm font-bold">
             PMF
-          </div>
-          <div className="text-sm font-medium text-foreground">
-            {nodeData.title}
           </div>
         </div>
         
+        <div className="text-xl font-bold text-foreground mb-2">
+          {nodeData.title}
+        </div>
+        
         {nodeData.description && (
-          <div className="text-xs text-muted-foreground mb-4">
+          <div className="text-sm text-foreground mb-8">
             {nodeData.description}
           </div>
         )}
 
-        <div className="space-y-3">
+        <div className="space-y-6">
           {/* Stage and Enrich boxes will be positioned inside */}
         </div>
 
         {nodeData.items && nodeData.items.length > 0 && (
-          <div className="mt-6">
-            <div className="text-xs font-medium mb-2 flex items-center gap-1">
+          <div className="mt-8 pt-4 border-t border-foreground/20">
+            <div className="text-sm font-bold mb-4 flex items-center gap-2">
               Modified Data Entities
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-3">
               {nodeData.items.map((item, index) => (
                 <div
                   key={index}
-                  className="bg-workflow-data-bg border-workflow-data-border border rounded px-2 py-1 text-xs"
+                  className="bg-workflow-data-bg border-workflow-data-border border-2 px-4 py-2 text-sm font-medium transform -skew-x-12"
+                  style={{ clipPath: 'polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%)' }}
                 >
-                  {item}
+                  <span className="transform skew-x-12 block">{item}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        <Handle type="target" position={Position.Left} className="w-2 h-2 bg-workflow-node-border" />
-        <Handle type="source" position={Position.Right} className="w-2 h-2 bg-workflow-node-border" />
+        <Handle type="target" position={Position.Left} className="w-3 h-3 bg-workflow-border rounded-none border-2 border-workflow-border" />
+        <Handle type="source" position={Position.Right} className="w-3 h-3 bg-workflow-border rounded-none border-2 border-workflow-border" />
       </div>
     );
   }
 
   return (
     <div className={getNodeStyles()}>
-      <div className="text-xs font-medium text-foreground">
+      <div className="text-lg font-bold text-foreground mb-3">
         {nodeData.title}
       </div>
       {nodeData.description && (
-        <div className="text-xs text-muted-foreground mt-1">
+        <div className="text-sm text-foreground leading-relaxed">
           {nodeData.description}
         </div>
       )}
       
-      <Handle type="target" position={Position.Top} className="w-2 h-2 bg-workflow-node-border" />
-      <Handle type="source" position={Position.Bottom} className="w-2 h-2 bg-workflow-node-border" />
+      <Handle type="target" position={Position.Top} className="w-3 h-3 bg-workflow-border rounded-none border-2 border-workflow-border" />
+      <Handle type="source" position={Position.Bottom} className="w-3 h-3 bg-workflow-border rounded-none border-2 border-workflow-border" />
     </div>
   );
 };

@@ -36,20 +36,24 @@ All colors MUST be HSL.
     --input: 210 14% 89%;
     --ring: 213 94% 68%;
 
-    /* Enterprise workflow colors */
-    --workflow-bg: 210 17% 98%;
-    --workflow-canvas: 0 0% 100%;
-    --workflow-border: 210 14% 89%;
+    /* Enterprise workflow colors - matching Figma design */
+    --workflow-bg: 220 20% 92%;
+    --workflow-canvas: 220 15% 96%;
+    --workflow-border: 213 94% 68%;
     --workflow-node-bg: 0 0% 100%;
-    --workflow-node-border: 213 23% 83%;
-    --workflow-stage-bg: 213 100% 97%;
-    --workflow-stage-border: 213 94% 68%;
-    --workflow-data-bg: 45 100% 97%;
+    --workflow-node-border: 213 94% 68%;
+    --workflow-main-bg: 220 15% 96%;
+    --workflow-main-border: 213 94% 68%;
+    --workflow-stage-bg: 220 15% 96%;
+    --workflow-stage-border: 0 0% 20%;
+    --workflow-data-bg: 45 100% 85%;
     --workflow-data-border: 45 93% 47%;
     --workflow-process-bg: 213 94% 68%;
     --workflow-process-text: 0 0% 100%;
-    --workflow-circular: 210 11% 94%;
-    --workflow-circular-border: 210 14% 89%;
+    --workflow-circular: 0 0% 100%;
+    --workflow-circular-border: 0 0% 20%;
+    --workflow-pmf-bg: 0 0% 20%;
+    --workflow-pmf-text: 0 0% 100%;
 
     --radius: 0.5rem;
 
@@ -102,17 +106,21 @@ All colors MUST be HSL.
     /* Dark mode enterprise workflow colors */
     --workflow-bg: 215 28% 17%;
     --workflow-canvas: 215 28% 22%;
-    --workflow-border: 215 25% 25%;
+    --workflow-border: 213 94% 68%;
     --workflow-node-bg: 215 28% 22%;
-    --workflow-node-border: 215 25% 35%;
-    --workflow-stage-bg: 213 50% 25%;
-    --workflow-stage-border: 213 94% 68%;
+    --workflow-node-border: 213 94% 68%;
+    --workflow-main-bg: 215 28% 22%;
+    --workflow-main-border: 213 94% 68%;
+    --workflow-stage-bg: 215 28% 22%;
+    --workflow-stage-border: 210 40% 98%;
     --workflow-data-bg: 45 50% 25%;
     --workflow-data-border: 45 93% 47%;
     --workflow-process-bg: 213 94% 68%;
     --workflow-process-text: 0 0% 100%;
-    --workflow-circular: 215 25% 25%;
-    --workflow-circular-border: 215 25% 35%;
+    --workflow-circular: 215 28% 22%;
+    --workflow-circular-border: 210 40% 98%;
+    --workflow-pmf-bg: 210 40% 98%;
+    --workflow-pmf-text: 215 28% 17%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;

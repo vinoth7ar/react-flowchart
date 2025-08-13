@@ -68,6 +68,8 @@ export default {
 					border: 'hsl(var(--workflow-border))',
 					'node-bg': 'hsl(var(--workflow-node-bg))',
 					'node-border': 'hsl(var(--workflow-node-border))',
+					'main-bg': 'hsl(var(--workflow-main-bg))',
+					'main-border': 'hsl(var(--workflow-main-border))',
 					'stage-bg': 'hsl(var(--workflow-stage-bg))',
 					'stage-border': 'hsl(var(--workflow-stage-border))',
 					'data-bg': 'hsl(var(--workflow-data-bg))',
@@ -75,7 +77,9 @@ export default {
 					'process-bg': 'hsl(var(--workflow-process-bg))',
 					'process-text': 'hsl(var(--workflow-process-text))',
 					circular: 'hsl(var(--workflow-circular))',
-					'circular-border': 'hsl(var(--workflow-circular-border))'
+					'circular-border': 'hsl(var(--workflow-circular-border))',
+					'pmf-bg': 'hsl(var(--workflow-pmf-bg))',
+					'pmf-text': 'hsl(var(--workflow-pmf-text))'
 				}
 			},
 			borderRadius: {
