@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ReactFlow,
   addEdge,
@@ -155,14 +155,14 @@ const initialEdges: Edge[] = [
     source: 'create-node',
     target: 'created-circle',
     style: { stroke: '#000', strokeWidth: 2 },
-    type: 'smoothstep',
+    type: 'straight',
   },
   {
     id: 'accept-to-accepted',
     source: 'accept-node',
     target: 'accepted-circle',
     style: { stroke: '#000', strokeWidth: 2 },
-    type: 'smoothstep',
+    type: 'straight',
   },
 ];
 
@@ -229,17 +229,12 @@ const WorkflowBuilder = () => {
     ...createEntityNodes(),
   ];
 
-  // Update nodes state with all nodes
-  useEffect(() => {
-    setNodes(allNodes);
-  }, [entitiesExpanded, selectedEntity, setNodes]);
-
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Main Canvas */}
       <div className="flex-1">
         <ReactFlow
-          nodes={nodes}
+          nodes={allNodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
