@@ -61,6 +61,21 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				workflow: {
+					bg: 'hsl(var(--workflow-bg))',
+					canvas: 'hsl(var(--workflow-canvas))',
+					border: 'hsl(var(--workflow-border))',
+					'node-bg': 'hsl(var(--workflow-node-bg))',
+					'node-border': 'hsl(var(--workflow-node-border))',
+					'stage-bg': 'hsl(var(--workflow-stage-bg))',
+					'stage-border': 'hsl(var(--workflow-stage-border))',
+					'data-bg': 'hsl(var(--workflow-data-bg))',
+					'data-border': 'hsl(var(--workflow-data-border))',
+					'process-bg': 'hsl(var(--workflow-process-bg))',
+					'process-text': 'hsl(var(--workflow-process-text))',
+					circular: 'hsl(var(--workflow-circular))',
+					'circular-border': 'hsl(var(--workflow-circular-border))'
 				}
 			},
 			borderRadius: {
