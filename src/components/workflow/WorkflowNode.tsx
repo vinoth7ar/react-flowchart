@@ -24,7 +24,7 @@ const WorkflowNode = ({ data }: NodeProps) => {
         const bgColor = nodeData.isSelected ? 'bg-yellow-200' : 'bg-white';
         return `${bgColor} border-gray-400 border-2 px-4 py-3 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow transform skew-x-[-15deg]`;
       case 'pmf-tag':
-        return 'bg-workflow-pmf-bg text-workflow-pmf-text px-4 py-2 rounded text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity border-2 border-workflow-pmf-border';
+        return 'bg-workflow-pmf-bg text-workflow-pmf-text px-4 py-2 rounded text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity border-2 border-gray-400';
       case 'process':
         return 'bg-workflow-process-bg text-workflow-process-text border-workflow-stage-border border rounded px-3 py-1 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow';
       default:

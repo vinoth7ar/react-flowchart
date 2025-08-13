@@ -84,7 +84,7 @@ const initialNodes: Node[] = [
   {
     id: 'staged-circle',
     type: 'circular',
-    position: { x: 155, y: 200 },
+    position: { x: 155, y: 180 },
     data: {
       label: 'staged',
       onClick: () => console.log('Staged status clicked'),
@@ -95,7 +95,7 @@ const initialNodes: Node[] = [
   {
     id: 'position-circle',
     type: 'circular',
-    position: { x: 455, y: 200 },
+    position: { x: 455, y: 180 },
     data: {
       label: 'position created',
       onClick: () => console.log('Position created status clicked'),
@@ -182,7 +182,7 @@ const WorkflowBuilder = () => {
     {
       id: 'data-entity-1',
       type: 'data',
-      position: { x: 80, y: 380 },
+      position: { x: 80, y: 320 },
       data: {
         title: 'Hypo Loan Position',
         type: 'data',
@@ -191,12 +191,12 @@ const WorkflowBuilder = () => {
       } as WorkflowNodeData,
       parentId: 'main-workflow',
       extent: 'parent' as const,
-      draggable: false,
+      draggable: true,
     },
     {
       id: 'data-entity-2',
       type: 'data',
-      position: { x: 260, y: 380 },
+      position: { x: 260, y: 320 },
       data: {
         title: 'Loan Commitment',
         type: 'data',
@@ -205,12 +205,12 @@ const WorkflowBuilder = () => {
       } as WorkflowNodeData,
       parentId: 'main-workflow',
       extent: 'parent' as const,
-      draggable: false,
+      draggable: true,
     },
     {
       id: 'data-entity-3',
       type: 'data',
-      position: { x: 440, y: 380 },
+      position: { x: 440, y: 320 },
       data: {
         title: 'Hypo Loan Base Price',
         type: 'data',
@@ -219,7 +219,7 @@ const WorkflowBuilder = () => {
       } as WorkflowNodeData,
       parentId: 'main-workflow',
       extent: 'parent' as const,
-      draggable: false,
+      draggable: true,
     },
   ] : [];
 
