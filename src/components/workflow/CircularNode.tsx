@@ -4,6 +4,7 @@ import { Handle, Position, NodeProps } from '@xyflow/react';
 export interface CircularNodeData extends Record<string, unknown> {
   label: string;
   onClick?: () => void;
+  color?: string;
 }
 
 const CircularNode = ({ data }: NodeProps) => {
@@ -16,9 +17,18 @@ const CircularNode = ({ data }: NodeProps) => {
     console.log('Clicked status node:', nodeData.label);
   };
 
+  const getCircleStyles = () => {
+    if (nodeData.color === 'green') {
+      return 'w-20 h-20 rounded-full bg-green-200 border-2 border-green-400 flex items-center justify-center shadow-sm cursor-pointer hover:shadow-md transition-shadow';
+    } else if (nodeData.color === 'gray') {
+      return 'w-20 h-20 rounded-full bg-gray-300 border-2 border-gray-500 flex items-center justify-center shadow-sm cursor-pointer hover:shadow-md transition-shadow';
+    }
+    return 'w-20 h-20 rounded-full bg-gray-100 border-2 border-gray-400 flex items-center justify-center shadow-sm cursor-pointer hover:shadow-md transition-shadow';
+  };
+
   return (
     <div 
-      className="w-20 h-20 rounded-full bg-gray-100 border-2 border-gray-400 flex items-center justify-center shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+      className={getCircleStyles()}
       onClick={handleClick}
     >
       <div className="text-sm font-medium text-center text-foreground px-2 leading-tight">

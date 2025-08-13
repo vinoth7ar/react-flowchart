@@ -10,6 +10,7 @@ export interface WorkflowNodeData extends Record<string, unknown> {
   entitiesExpanded?: boolean;
   onToggleEntities?: () => void;
   isSelected?: boolean;
+  color?: string;
 }
 
 const WorkflowNode = ({ data }: NodeProps) => {
@@ -17,14 +18,24 @@ const WorkflowNode = ({ data }: NodeProps) => {
   const getNodeStyles = () => {
     switch (nodeData.type) {
       case 'workflow':
-        return 'bg-white border-2 border-dashed border-blue-500 rounded-lg min-w-[600px] min-h-[450px] p-8 relative';
+        return 'bg-white border-2 border-dotted border-gray-400 rounded-lg min-w-[600px] min-h-[350px] p-8 relative';
       case 'stage':
-        return 'bg-blue-50 border-blue-400 border-2 rounded p-4 min-w-[200px] min-h-[80px] cursor-pointer hover:shadow-md transition-shadow';
+        if (nodeData.color === 'green') {
+          return 'bg-green-100 border-green-400 border-2 rounded p-4 min-w-[250px] min-h-[120px] cursor-pointer hover:shadow-md transition-shadow';
+        } else if (nodeData.color === 'blue') {
+          return 'bg-blue-100 border-blue-400 border-2 rounded p-4 min-w-[250px] min-h-[120px] cursor-pointer hover:shadow-md transition-shadow';
+        }
+        return 'bg-gray-100 border-gray-400 border-2 rounded p-4 min-w-[250px] min-h-[120px] cursor-pointer hover:shadow-md transition-shadow';
       case 'data':
-        const bgColor = nodeData.isSelected ? 'bg-yellow-200' : 'bg-white';
+        let bgColor = 'bg-white';
+        if (nodeData.color === 'yellow') {
+          bgColor = nodeData.isSelected ? 'bg-yellow-300' : 'bg-yellow-200';
+        } else {
+          bgColor = nodeData.isSelected ? 'bg-yellow-200' : 'bg-white';
+        }
         return `${bgColor} border-gray-400 border-2 px-4 py-3 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow transform skew-x-[-15deg]`;
       case 'pmf-tag':
-        return 'bg-orange-400 text-white px-4 py-2 rounded text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity border-2 border-gray-400';
+        return 'bg-black text-white px-3 py-2 rounded text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity border-2 border-gray-400';
       case 'process':
         return 'bg-workflow-process-bg text-workflow-process-text border-workflow-stage-border border rounded px-3 py-1 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow';
       default:
@@ -86,16 +97,16 @@ const WorkflowNode = ({ data }: NodeProps) => {
                 nodeData.onToggleEntities();
               }
             }}
-            className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+            className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
           >
-            Modified Data Entities
+            See Data Entities
             <svg 
               className={`w-4 h-4 transition-transform ${nodeData.entitiesExpanded ? 'rotate-180' : ''}`} 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
             </svg>
           </button>
         </div>

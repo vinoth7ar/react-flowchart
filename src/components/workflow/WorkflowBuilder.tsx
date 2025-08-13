@@ -28,55 +28,54 @@ const nodeTypes = {
 const mockWorkflowData = {
   workflow: {
     id: 'main-workflow',
-    title: 'Hypo Loan Position',
-    description: 'Workflow description',
+    title: 'Commitment',
+    description: '',
   },
   stages: [
     {
-      id: 'stage-node',
-      title: 'Stage',
-      description: 'FLUME stages commitment data in PMF database',
-      position: { x: 80, y: 80 },
+      id: 'create-node',
+      title: 'Create',
+      description: 'Seller enters commitment details in contract takeout screen. 5 hypo loans are created with base prices.',
+      position: { x: 50, y: 50 },
+      color: 'green',
     },
     {
-      id: 'enrich-node', 
-      title: 'Enrich',
-      description: 'PMF enriches hypo loan positions.',
-      position: { x: 380, y: 80 },
+      id: 'accept-node', 
+      title: 'Accept',
+      description: '',
+      position: { x: 400, y: 50 },
+      color: 'blue',
     }
   ],
   statusNodes: [
     {
-      id: 'staged-circle',
-      label: 'staged',
-      position: { x: 155, y: 180 },
+      id: 'created-circle',
+      label: 'created',
+      position: { x: 150, y: 150 },
+      color: 'green',
     },
     {
-      id: 'position-circle',
-      label: 'position created',
-      position: { x: 455, y: 180 },
+      id: 'accepted-circle',
+      label: 'accepted',
+      position: { x: 450, y: 150 },
+      color: 'gray',
     }
   ],
   entities: [
     {
       id: 'data-entity-1',
-      title: 'Hypo Loan Position',
+      title: 'Loan Commitment',
+      color: 'yellow',
     },
     {
       id: 'data-entity-2', 
-      title: 'Loan Commitment',
+      title: 'Hypo Loan Position',
+      color: 'white',
     },
     {
       id: 'data-entity-3',
       title: 'Hypo Loan Base Price',
-    },
-    {
-      id: 'data-entity-4',
-      title: 'Interest Rate',
-    },
-    {
-      id: 'data-entity-5',
-      title: 'Customer Profile',
+      color: 'white',
     }
   ]
 };
@@ -84,15 +83,15 @@ const mockWorkflowData = {
 const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
   const nodes: Node[] = [];
 
-  // PMF Tag
+  // LSA Tag (outside workflow)
   nodes.push({
-    id: 'pmf-tag',
+    id: 'lsa-tag',
     type: 'pmf-tag',
-    position: { x: 80, y: 80 },
+    position: { x: 50, y: 50 },
     data: {
-      title: 'PMF',
+      title: 'LSA',
       type: 'pmf-tag',
-      onClick: () => console.log('PMF tag clicked'),
+      onClick: () => console.log('LSA tag clicked'),
     } as WorkflowNodeData,
     draggable: false,
   });
@@ -101,13 +100,13 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
   nodes.push({
     id: workflowData.workflow.id,
     type: 'workflow',
-    position: { x: 100, y: 120 },
+    position: { x: 100, y: 100 },
     data: {
       title: workflowData.workflow.title,
       description: workflowData.workflow.description,
       type: 'workflow',
     } as WorkflowNodeData,
-    style: { width: 650, height: 480 },
+    style: { width: 600, height: 350 },
   });
 
   // Stage nodes
@@ -120,11 +119,12 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
         title: stage.title,
         description: stage.description,
         type: 'stage',
+        color: stage.color,
         onClick: () => console.log(`${stage.title} event clicked`),
       } as WorkflowNodeData,
       parentId: workflowData.workflow.id,
       extent: 'parent',
-      style: { width: 200, height: 80 },
+      style: { width: 250, height: 120 },
     });
   });
 
@@ -136,6 +136,7 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
       position: status.position,
       data: {
         label: status.label,
+        color: status.color,
         onClick: () => console.log(`${status.label} status clicked`),
       } as CircularNodeData,
       parentId: workflowData.workflow.id,
@@ -150,23 +151,16 @@ const initialNodes = createInitialNodes(mockWorkflowData);
 
 const initialEdges: Edge[] = [
   {
-    id: 'stage-to-staged',
-    source: 'stage-node',
-    target: 'staged-circle',
+    id: 'create-to-created',
+    source: 'create-node',
+    target: 'created-circle',
     style: { stroke: '#000', strokeWidth: 2 },
     type: 'straight',
   },
   {
-    id: 'enrich-to-position',
-    source: 'enrich-node',
-    target: 'position-circle',
-    style: { stroke: '#000', strokeWidth: 2 },
-    type: 'straight',
-  },
-  {
-    id: 'staged-to-enrich',
-    source: 'staged-circle',
-    target: 'enrich-node',
+    id: 'accept-to-accepted',
+    source: 'accept-node',
+    target: 'accepted-circle',
     style: { stroke: '#000', strokeWidth: 2 },
     type: 'straight',
   },
@@ -195,10 +189,8 @@ const WorkflowBuilder = () => {
     const startY = 280;
 
     mockWorkflowData.entities.forEach((entity, index) => {
-      const row = Math.floor(index / entitiesPerRow);
-      const col = index % entitiesPerRow;
-      const x = startX + col * (entityWidth + entitySpacing);
-      const y = startY + row * 60;
+      const x = 50 + index * 180;
+      const y = 250;
 
       entityNodes.push({
         id: entity.id,
@@ -207,6 +199,7 @@ const WorkflowBuilder = () => {
         data: {
           title: entity.title,
           type: 'data',
+          color: entity.color,
           isSelected: selectedEntity === entity.id,
           onClick: () => setSelectedEntity(selectedEntity === entity.id ? null : entity.id),
         } as WorkflowNodeData,
