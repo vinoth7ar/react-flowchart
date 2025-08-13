@@ -18,7 +18,7 @@ const CircularNode = ({ data }: NodeProps) => {
 
   return (
     <div 
-      className="w-24 h-24 rounded-full bg-workflow-circular border-2 border-workflow-circular-border flex items-center justify-center shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+      className="w-20 h-20 rounded-full bg-workflow-circular border-2 border-workflow-circular-border flex items-center justify-center shadow-sm cursor-pointer hover:shadow-md transition-shadow"
       onClick={handleClick}
     >
       <div className="text-sm font-medium text-center text-foreground px-2 leading-tight">

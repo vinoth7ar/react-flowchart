@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ReactFlow,
   addEdge,
@@ -54,7 +54,7 @@ const initialNodes: Node[] = [
   {
     id: 'stage-node',
     type: 'stage',
-    position: { x: 50, y: 140 },
+    position: { x: 80, y: 80 },
     data: {
       title: 'Stage',
       description: 'FLUME stages commitment data in PMF database',
@@ -63,13 +63,13 @@ const initialNodes: Node[] = [
     } as WorkflowNodeData,
     parentId: 'main-workflow',
     extent: 'parent',
-    style: { width: 220, height: 110 },
+    style: { width: 200, height: 80 },
   },
   // Enrich node inside workflow
   {
     id: 'enrich-node',
     type: 'stage',
-    position: { x: 350, y: 140 },
+    position: { x: 380, y: 80 },
     data: {
       title: 'Enrich',
       description: 'PMF enriches hypo loan positions.',
@@ -78,13 +78,13 @@ const initialNodes: Node[] = [
     } as WorkflowNodeData,
     parentId: 'main-workflow',
     extent: 'parent',
-    style: { width: 220, height: 110 },
+    style: { width: 200, height: 80 },
   },
   // Status nodes (circular)
   {
     id: 'staged-circle',
     type: 'circular',
-    position: { x: 140, y: 270 },
+    position: { x: 155, y: 200 },
     data: {
       label: 'staged',
       onClick: () => console.log('Staged status clicked'),
@@ -95,7 +95,7 @@ const initialNodes: Node[] = [
   {
     id: 'position-circle',
     type: 'circular',
-    position: { x: 440, y: 270 },
+    position: { x: 455, y: 200 },
     data: {
       label: 'position created',
       onClick: () => console.log('Position created status clicked'),
@@ -169,18 +169,83 @@ const initialEdges: Edge[] = [
 const WorkflowBuilder = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [entitiesExpanded, setEntitiesExpanded] = useState(false);
+  const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
 
+  // Create data entity nodes dynamically based on expansion state
+  const dataEntityNodes: Node[] = entitiesExpanded ? [
+    {
+      id: 'data-entity-1',
+      type: 'data',
+      position: { x: 80, y: 380 },
+      data: {
+        title: 'Hypo Loan Position',
+        type: 'data',
+        isSelected: selectedEntity === 'data-entity-1',
+        onClick: () => setSelectedEntity(selectedEntity === 'data-entity-1' ? null : 'data-entity-1'),
+      } as WorkflowNodeData,
+      parentId: 'main-workflow',
+      extent: 'parent' as const,
+      draggable: false,
+    },
+    {
+      id: 'data-entity-2',
+      type: 'data',
+      position: { x: 260, y: 380 },
+      data: {
+        title: 'Loan Commitment',
+        type: 'data',
+        isSelected: selectedEntity === 'data-entity-2',
+        onClick: () => setSelectedEntity(selectedEntity === 'data-entity-2' ? null : 'data-entity-2'),
+      } as WorkflowNodeData,
+      parentId: 'main-workflow',
+      extent: 'parent' as const,
+      draggable: false,
+    },
+    {
+      id: 'data-entity-3',
+      type: 'data',
+      position: { x: 440, y: 380 },
+      data: {
+        title: 'Hypo Loan Base Price',
+        type: 'data',
+        isSelected: selectedEntity === 'data-entity-3',
+        onClick: () => setSelectedEntity(selectedEntity === 'data-entity-3' ? null : 'data-entity-3'),
+      } as WorkflowNodeData,
+      parentId: 'main-workflow',
+      extent: 'parent' as const,
+      draggable: false,
+    },
+  ] : [];
+
+  // Update main workflow node with expand/collapse button
+  const workflowNodeWithButton: Node = {
+    ...initialNodes.find(n => n.id === 'main-workflow')!,
+    data: {
+      ...initialNodes.find(n => n.id === 'main-workflow')!.data,
+      entitiesExpanded,
+      onToggleEntities: () => setEntitiesExpanded(!entitiesExpanded),
+    }
+  };
+
+  // Combine all nodes
+  const allNodes = [
+    ...initialNodes.filter(n => n.id !== 'main-workflow' && !n.id.startsWith('data-entity')),
+    workflowNodeWithButton,
+    ...dataEntityNodes,
+  ];
+
   return (
     <div className="flex h-screen bg-workflow-bg">
       {/* Main Canvas */}
       <div className="flex-1">
         <ReactFlow
-          nodes={nodes}
+          nodes={allNodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -199,11 +264,6 @@ const WorkflowBuilder = () => {
             size={1}
           />
           <Controls className="bg-workflow-node-bg border-workflow-border shadow-lg" />
-          <MiniMap 
-            className="bg-workflow-node-bg border-workflow-border shadow-lg"
-            nodeColor="hsl(var(--workflow-border))"
-            maskColor="hsl(var(--workflow-bg) / 0.9)"
-          />
         </ReactFlow>
       </div>
 
