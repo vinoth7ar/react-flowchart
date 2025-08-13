@@ -17,14 +17,14 @@ const WorkflowNode = ({ data }: NodeProps) => {
   const getNodeStyles = () => {
     switch (nodeData.type) {
       case 'workflow':
-        return 'bg-workflow-main-bg border-workflow-main-border border-2 border-dashed rounded-lg min-w-[600px] min-h-[450px] p-8 relative';
+        return 'bg-white border-2 border-dashed border-blue-500 rounded-lg min-w-[600px] min-h-[450px] p-8 relative';
       case 'stage':
-        return 'bg-workflow-stage-bg border-workflow-stage-border border-2 rounded p-4 min-w-[200px] min-h-[80px] cursor-pointer hover:shadow-md transition-shadow';
+        return 'bg-blue-50 border-blue-400 border-2 rounded p-4 min-w-[200px] min-h-[80px] cursor-pointer hover:shadow-md transition-shadow';
       case 'data':
         const bgColor = nodeData.isSelected ? 'bg-yellow-200' : 'bg-white';
         return `${bgColor} border-gray-400 border-2 px-4 py-3 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow transform skew-x-[-15deg]`;
       case 'pmf-tag':
-        return 'bg-workflow-pmf-bg text-workflow-pmf-text px-4 py-2 rounded text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity border-2 border-gray-400';
+        return 'bg-orange-400 text-white px-4 py-2 rounded text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity border-2 border-gray-400';
       case 'process':
         return 'bg-workflow-process-bg text-workflow-process-text border-workflow-stage-border border rounded px-3 py-1 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow';
       default:

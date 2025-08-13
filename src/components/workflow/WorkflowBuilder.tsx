@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import {
   ReactFlow,
   addEdge,
-  MiniMap,
   Controls,
   Background,
   useNodesState,
@@ -25,9 +24,68 @@ const nodeTypes = {
   'pmf-tag': WorkflowNode,
 };
 
-const initialNodes: Node[] = [
-  // PMF Tag positioned outside the main workflow
-  {
+// Mock data - this would come from backend
+const mockWorkflowData = {
+  workflow: {
+    id: 'main-workflow',
+    title: 'Hypo Loan Position',
+    description: 'Workflow description',
+  },
+  stages: [
+    {
+      id: 'stage-node',
+      title: 'Stage',
+      description: 'FLUME stages commitment data in PMF database',
+      position: { x: 80, y: 80 },
+    },
+    {
+      id: 'enrich-node', 
+      title: 'Enrich',
+      description: 'PMF enriches hypo loan positions.',
+      position: { x: 380, y: 80 },
+    }
+  ],
+  statusNodes: [
+    {
+      id: 'staged-circle',
+      label: 'staged',
+      position: { x: 155, y: 180 },
+    },
+    {
+      id: 'position-circle',
+      label: 'position created',
+      position: { x: 455, y: 180 },
+    }
+  ],
+  entities: [
+    {
+      id: 'data-entity-1',
+      title: 'Hypo Loan Position',
+    },
+    {
+      id: 'data-entity-2', 
+      title: 'Loan Commitment',
+    },
+    {
+      id: 'data-entity-3',
+      title: 'Hypo Loan Base Price',
+    },
+    {
+      id: 'data-entity-4',
+      title: 'Interest Rate',
+    },
+    {
+      id: 'data-entity-5',
+      title: 'Customer Profile',
+    }
+  ]
+};
+
+const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
+  const nodes: Node[] = [];
+
+  // PMF Tag
+  nodes.push({
     id: 'pmf-tag',
     type: 'pmf-tag',
     position: { x: 80, y: 80 },
@@ -37,131 +95,79 @@ const initialNodes: Node[] = [
       onClick: () => console.log('PMF tag clicked'),
     } as WorkflowNodeData,
     draggable: false,
-  },
+  });
+
   // Main workflow container
-  {
-    id: 'main-workflow',
+  nodes.push({
+    id: workflowData.workflow.id,
     type: 'workflow',
     position: { x: 100, y: 120 },
     data: {
-      title: 'Hypo Loan Position',
-      description: 'Workflow description',
+      title: workflowData.workflow.title,
+      description: workflowData.workflow.description,
       type: 'workflow',
     } as WorkflowNodeData,
     style: { width: 650, height: 480 },
-  },
-  // Stage node inside workflow
-  {
-    id: 'stage-node',
-    type: 'stage',
-    position: { x: 80, y: 80 },
-    data: {
-      title: 'Stage',
-      description: 'FLUME stages commitment data in PMF database',
+  });
+
+  // Stage nodes
+  workflowData.stages.forEach(stage => {
+    nodes.push({
+      id: stage.id,
       type: 'stage',
-      onClick: () => console.log('Stage event clicked'),
-    } as WorkflowNodeData,
-    parentId: 'main-workflow',
-    extent: 'parent',
-    style: { width: 200, height: 80 },
-  },
-  // Enrich node inside workflow
-  {
-    id: 'enrich-node',
-    type: 'stage',
-    position: { x: 380, y: 80 },
-    data: {
-      title: 'Enrich',
-      description: 'PMF enriches hypo loan positions.',
-      type: 'stage',
-      onClick: () => console.log('Enrich event clicked'),
-    } as WorkflowNodeData,
-    parentId: 'main-workflow',
-    extent: 'parent',
-    style: { width: 200, height: 80 },
-  },
+      position: stage.position,
+      data: {
+        title: stage.title,
+        description: stage.description,
+        type: 'stage',
+        onClick: () => console.log(`${stage.title} event clicked`),
+      } as WorkflowNodeData,
+      parentId: workflowData.workflow.id,
+      extent: 'parent',
+      style: { width: 200, height: 80 },
+    });
+  });
+
   // Status nodes (circular)
-  {
-    id: 'staged-circle',
-    type: 'circular',
-    position: { x: 155, y: 180 },
-    data: {
-      label: 'staged',
-      onClick: () => console.log('Staged status clicked'),
-    } as CircularNodeData,
-    parentId: 'main-workflow',
-    extent: 'parent',
-  },
-  {
-    id: 'position-circle',
-    type: 'circular',
-    position: { x: 455, y: 180 },
-    data: {
-      label: 'position created',
-      onClick: () => console.log('Position created status clicked'),
-    } as CircularNodeData,
-    parentId: 'main-workflow',
-    extent: 'parent',
-  },
-  // Data entity nodes
-  {
-    id: 'data-entity-1',
-    type: 'data',
-    position: { x: 70, y: 380 },
-    data: {
-      title: 'Hypo Loan Position',
-      type: 'data',
-      onClick: () => console.log('Hypo Loan Position data entity clicked'),
-    } as WorkflowNodeData,
-    parentId: 'main-workflow',
-    extent: 'parent',
-  },
-  {
-    id: 'data-entity-2',
-    type: 'data',
-    position: { x: 280, y: 380 },
-    data: {
-      title: 'Loan Commitment',
-      type: 'data',
-      onClick: () => console.log('Loan Commitment data entity clicked'),
-    } as WorkflowNodeData,
-    parentId: 'main-workflow',
-    extent: 'parent',
-  },
-  {
-    id: 'data-entity-3',
-    type: 'data',
-    position: { x: 70, y: 430 },
-    data: {
-      title: 'Hypo Loan Base Price',
-      type: 'data',
-      onClick: () => console.log('Hypo Loan Base Price data entity clicked'),
-    } as WorkflowNodeData,
-    parentId: 'main-workflow',
-    extent: 'parent',
-  },
-];
+  workflowData.statusNodes.forEach(status => {
+    nodes.push({
+      id: status.id,
+      type: 'circular',
+      position: status.position,
+      data: {
+        label: status.label,
+        onClick: () => console.log(`${status.label} status clicked`),
+      } as CircularNodeData,
+      parentId: workflowData.workflow.id,
+      extent: 'parent',
+    });
+  });
+
+  return nodes;
+};
+
+const initialNodes = createInitialNodes(mockWorkflowData);
 
 const initialEdges: Edge[] = [
   {
     id: 'stage-to-staged',
     source: 'stage-node',
     target: 'staged-circle',
-    style: { stroke: 'hsl(var(--foreground))', strokeWidth: 2 },
+    style: { stroke: '#000', strokeWidth: 2 },
     type: 'straight',
   },
   {
     id: 'enrich-to-position',
     source: 'enrich-node',
     target: 'position-circle',
-    style: { stroke: 'hsl(var(--foreground))', strokeWidth: 2 },
+    style: { stroke: '#000', strokeWidth: 2 },
     type: 'straight',
   },
   {
     id: 'staged-to-enrich',
     source: 'staged-circle',
     target: 'enrich-node',
-    style: { stroke: 'hsl(var(--foreground))', strokeWidth: 2 },
+    style: { stroke: '#000', strokeWidth: 2 },
     type: 'straight',
   },
 ];
@@ -178,56 +184,46 @@ const WorkflowBuilder = () => {
   );
 
   // Create data entity nodes dynamically based on expansion state
-  const dataEntityNodes: Node[] = entitiesExpanded ? [
-    {
-      id: 'data-entity-1',
-      type: 'data',
-      position: { x: 80, y: 320 },
-      data: {
-        title: 'Hypo Loan Position',
+  const createEntityNodes = (): Node[] => {
+    if (!entitiesExpanded) return [];
+    
+    const entityNodes: Node[] = [];
+    const entitiesPerRow = 3;
+    const entityWidth = 160;
+    const entitySpacing = 20;
+    const startX = 80;
+    const startY = 280;
+
+    mockWorkflowData.entities.forEach((entity, index) => {
+      const row = Math.floor(index / entitiesPerRow);
+      const col = index % entitiesPerRow;
+      const x = startX + col * (entityWidth + entitySpacing);
+      const y = startY + row * 60;
+
+      entityNodes.push({
+        id: entity.id,
         type: 'data',
-        isSelected: selectedEntity === 'data-entity-1',
-        onClick: () => setSelectedEntity(selectedEntity === 'data-entity-1' ? null : 'data-entity-1'),
-      } as WorkflowNodeData,
-      parentId: 'main-workflow',
-      extent: 'parent' as const,
-      draggable: true,
-    },
-    {
-      id: 'data-entity-2',
-      type: 'data',
-      position: { x: 260, y: 320 },
-      data: {
-        title: 'Loan Commitment',
-        type: 'data',
-        isSelected: selectedEntity === 'data-entity-2',
-        onClick: () => setSelectedEntity(selectedEntity === 'data-entity-2' ? null : 'data-entity-2'),
-      } as WorkflowNodeData,
-      parentId: 'main-workflow',
-      extent: 'parent' as const,
-      draggable: true,
-    },
-    {
-      id: 'data-entity-3',
-      type: 'data',
-      position: { x: 440, y: 320 },
-      data: {
-        title: 'Hypo Loan Base Price',
-        type: 'data',
-        isSelected: selectedEntity === 'data-entity-3',
-        onClick: () => setSelectedEntity(selectedEntity === 'data-entity-3' ? null : 'data-entity-3'),
-      } as WorkflowNodeData,
-      parentId: 'main-workflow',
-      extent: 'parent' as const,
-      draggable: true,
-    },
-  ] : [];
+        position: { x, y },
+        data: {
+          title: entity.title,
+          type: 'data',
+          isSelected: selectedEntity === entity.id,
+          onClick: () => setSelectedEntity(selectedEntity === entity.id ? null : entity.id),
+        } as WorkflowNodeData,
+        parentId: mockWorkflowData.workflow.id,
+        extent: 'parent' as const,
+        draggable: true,
+      });
+    });
+
+    return entityNodes;
+  };
 
   // Update main workflow node with expand/collapse button
   const workflowNodeWithButton: Node = {
-    ...initialNodes.find(n => n.id === 'main-workflow')!,
+    ...initialNodes.find(n => n.id === mockWorkflowData.workflow.id)!,
     data: {
-      ...initialNodes.find(n => n.id === 'main-workflow')!.data,
+      ...initialNodes.find(n => n.id === mockWorkflowData.workflow.id)!.data,
       entitiesExpanded,
       onToggleEntities: () => setEntitiesExpanded(!entitiesExpanded),
     }
@@ -235,13 +231,13 @@ const WorkflowBuilder = () => {
 
   // Combine all nodes
   const allNodes = [
-    ...initialNodes.filter(n => n.id !== 'main-workflow' && !n.id.startsWith('data-entity')),
+    ...initialNodes.filter(n => n.id !== mockWorkflowData.workflow.id),
     workflowNodeWithButton,
-    ...dataEntityNodes,
+    ...createEntityNodes(),
   ];
 
   return (
-    <div className="flex h-screen bg-workflow-bg">
+    <div className="flex h-screen bg-gray-50">
       {/* Main Canvas */}
       <div className="flex-1">
         <ReactFlow
@@ -252,18 +248,18 @@ const WorkflowBuilder = () => {
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           fitView
-          className="bg-workflow-canvas"
+          className="bg-white"
           defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
           nodesDraggable={true}
           nodesConnectable={true}
           elementsSelectable={true}
         >
           <Background 
-            color="hsl(var(--workflow-border))" 
+            color="#e5e7eb" 
             gap={25}
             size={1}
           />
-          <Controls className="bg-workflow-node-bg border-workflow-border shadow-lg" />
+          <Controls className="bg-white border border-gray-300 shadow-lg" />
         </ReactFlow>
       </div>
 
