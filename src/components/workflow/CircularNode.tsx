@@ -3,13 +3,25 @@ import { Handle, Position, NodeProps } from '@xyflow/react';
 
 export interface CircularNodeData extends Record<string, unknown> {
   label: string;
+  onClick?: () => void;
 }
 
 const CircularNode = ({ data }: NodeProps) => {
   const nodeData = data as CircularNodeData;
+  
+  const handleClick = () => {
+    if (nodeData.onClick) {
+      nodeData.onClick();
+    }
+    console.log('Clicked status node:', nodeData.label);
+  };
+
   return (
-    <div className="w-20 h-20 rounded-full bg-workflow-circular border-2 border-workflow-circular-border flex items-center justify-center shadow-sm">
-      <div className="text-xs font-medium text-center text-foreground px-2 leading-tight">
+    <div 
+      className="w-24 h-24 rounded-full bg-workflow-circular border-2 border-workflow-circular-border flex items-center justify-center shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+      onClick={handleClick}
+    >
+      <div className="text-sm font-medium text-center text-foreground px-2 leading-tight">
         {nodeData.label}
       </div>
       

@@ -22,53 +22,72 @@ const nodeTypes = {
   circular: CircularNode,
   stage: WorkflowNode,
   data: WorkflowNode,
+  'pmf-tag': WorkflowNode,
 };
 
 const initialNodes: Node[] = [
+  // PMF Tag positioned outside the main workflow
+  {
+    id: 'pmf-tag',
+    type: 'pmf-tag',
+    position: { x: 80, y: 80 },
+    data: {
+      title: 'PMF',
+      type: 'pmf-tag',
+      onClick: () => console.log('PMF tag clicked'),
+    } as WorkflowNodeData,
+    draggable: false,
+  },
+  // Main workflow container
   {
     id: 'main-workflow',
     type: 'workflow',
-    position: { x: 100, y: 100 },
+    position: { x: 100, y: 120 },
     data: {
       title: 'Hypo Loan Position',
       description: 'Workflow description',
       type: 'workflow',
-      items: ['Hypo Loan Position', 'Loan Commitment', 'Hypo Loan Base Price'],
     } as WorkflowNodeData,
-    style: { width: 550, height: 400 },
+    style: { width: 650, height: 480 },
   },
+  // Stage node inside workflow
   {
     id: 'stage-node',
     type: 'stage',
-    position: { x: 40, y: 120 },
+    position: { x: 50, y: 140 },
     data: {
       title: 'Stage',
       description: 'FLUME stages commitment data in PMF database',
       type: 'stage',
+      onClick: () => console.log('Stage event clicked'),
     } as WorkflowNodeData,
     parentId: 'main-workflow',
     extent: 'parent',
-    style: { width: 200, height: 100 },
+    style: { width: 220, height: 110 },
   },
+  // Enrich node inside workflow
   {
     id: 'enrich-node',
     type: 'stage',
-    position: { x: 300, y: 120 },
+    position: { x: 350, y: 140 },
     data: {
       title: 'Enrich',
       description: 'PMF enriches hypo loan positions.',
       type: 'stage',
+      onClick: () => console.log('Enrich event clicked'),
     } as WorkflowNodeData,
     parentId: 'main-workflow',
     extent: 'parent',
-    style: { width: 200, height: 100 },
+    style: { width: 220, height: 110 },
   },
+  // Status nodes (circular)
   {
     id: 'staged-circle',
     type: 'circular',
-    position: { x: 120, y: 240 },
+    position: { x: 140, y: 270 },
     data: {
       label: 'staged',
+      onClick: () => console.log('Staged status clicked'),
     } as CircularNodeData,
     parentId: 'main-workflow',
     extent: 'parent',
@@ -76,10 +95,48 @@ const initialNodes: Node[] = [
   {
     id: 'position-circle',
     type: 'circular',
-    position: { x: 380, y: 240 },
+    position: { x: 440, y: 270 },
     data: {
       label: 'position created',
+      onClick: () => console.log('Position created status clicked'),
     } as CircularNodeData,
+    parentId: 'main-workflow',
+    extent: 'parent',
+  },
+  // Data entity nodes
+  {
+    id: 'data-entity-1',
+    type: 'data',
+    position: { x: 70, y: 380 },
+    data: {
+      title: 'Hypo Loan Position',
+      type: 'data',
+      onClick: () => console.log('Hypo Loan Position data entity clicked'),
+    } as WorkflowNodeData,
+    parentId: 'main-workflow',
+    extent: 'parent',
+  },
+  {
+    id: 'data-entity-2',
+    type: 'data',
+    position: { x: 280, y: 380 },
+    data: {
+      title: 'Loan Commitment',
+      type: 'data',
+      onClick: () => console.log('Loan Commitment data entity clicked'),
+    } as WorkflowNodeData,
+    parentId: 'main-workflow',
+    extent: 'parent',
+  },
+  {
+    id: 'data-entity-3',
+    type: 'data',
+    position: { x: 70, y: 430 },
+    data: {
+      title: 'Hypo Loan Base Price',
+      type: 'data',
+      onClick: () => console.log('Hypo Loan Base Price data entity clicked'),
+    } as WorkflowNodeData,
     parentId: 'main-workflow',
     extent: 'parent',
   },
