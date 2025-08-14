@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import {
   ReactFlow,
   addEdge,
@@ -180,8 +180,8 @@ const WorkflowBuilder = () => {
     [setEdges]
   );
 
-  // Create data entity nodes - always show them
-  const createEntityNodes = (): Node[] => {
+  // Initialize data entity nodes once
+  useEffect(() => {
     const entityNodes: Node[] = [];
 
     mockWorkflowData.entities.forEach((entity, index) => {
@@ -205,21 +205,19 @@ const WorkflowBuilder = () => {
       });
     });
 
-    return entityNodes;
-  };
-
-  // Combine all nodes
-  const allNodes = [
-    ...initialNodes,
-    ...createEntityNodes(),
-  ];
+    setNodes((currentNodes) => {
+      const existingEntityIds = entityNodes.map(n => n.id);
+      const filteredNodes = currentNodes.filter(n => !existingEntityIds.includes(n.id));
+      return [...filteredNodes, ...entityNodes];
+    });
+  }, [setNodes]);
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Main Canvas */}
       <div className="flex-1 p-2">
         <ReactFlow
-          nodes={allNodes}
+          nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
