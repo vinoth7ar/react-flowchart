@@ -22,6 +22,7 @@ const nodeTypes = {
   stage: WorkflowNode,
   data: WorkflowNode,
   'pmf-tag': WorkflowNode,
+  'entities-group': WorkflowNode,
 };
 
 // Mock data - this would come from backend
@@ -180,35 +181,26 @@ const WorkflowBuilder = () => {
     [setEdges]
   );
 
-  // Initialize data entity nodes once
+  // Initialize grouped entities node once
   useEffect(() => {
-    const entityNodes: Node[] = [];
-
-    mockWorkflowData.entities.forEach((entity, index) => {
-      const x = 30 + index * 180;
-      const y = 350;
-
-      entityNodes.push({
-        id: entity.id,
-        type: 'data',
-        position: { x, y },
-        data: {
-          title: entity.title,
-          type: 'data',
-          color: entity.color,
-          isSelected: selectedEntity === entity.id,
-          onClick: () => setSelectedEntity(selectedEntity === entity.id ? null : entity.id),
-        } as WorkflowNodeData,
-        parentId: mockWorkflowData.workflow.id,
-        extent: 'parent' as const,
-        draggable: true,
-      });
-    });
+    const entitiesGroupNode: Node = {
+      id: 'entities-group',
+      type: 'entities-group',
+      position: { x: 30, y: 320 },
+      data: {
+        title: 'Data Entities',
+        type: 'entities-group',
+        entities: mockWorkflowData.entities,
+        onClick: () => console.log('Entities group clicked'),
+      } as WorkflowNodeData,
+      parentId: mockWorkflowData.workflow.id,
+      extent: 'parent' as const,
+      draggable: true,
+    };
 
     setNodes((currentNodes) => {
-      const existingEntityIds = entityNodes.map(n => n.id);
-      const filteredNodes = currentNodes.filter(n => !existingEntityIds.includes(n.id));
-      return [...filteredNodes, ...entityNodes];
+      const filteredNodes = currentNodes.filter(n => n.id !== 'entities-group');
+      return [...filteredNodes, entitiesGroupNode];
     });
   }, [setNodes]);
 

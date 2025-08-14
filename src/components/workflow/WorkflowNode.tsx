@@ -4,8 +4,9 @@ import { Handle, Position, NodeProps } from '@xyflow/react';
 export interface WorkflowNodeData extends Record<string, unknown> {
   title: string;
   description?: string;
-  type: 'workflow' | 'stage' | 'data' | 'process' | 'pmf-tag';
+  type: 'workflow' | 'stage' | 'data' | 'process' | 'pmf-tag' | 'entities-group';
   items?: string[];
+  entities?: Array<{ id: string; title: string; color?: string }>;
   onClick?: () => void;
   entitiesExpanded?: boolean;
   onToggleEntities?: () => void;
@@ -31,6 +32,8 @@ const WorkflowNode = ({ data }: NodeProps) => {
         return 'bg-black text-white px-2 py-1 text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity';
       case 'process':
         return 'bg-workflow-process-bg text-workflow-process-text border-workflow-stage-border border rounded px-3 py-1 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow';
+      case 'entities-group':
+        return 'bg-white border border-gray-300 rounded p-3 min-w-[500px] cursor-pointer hover:shadow-md transition-shadow';
       default:
         return 'bg-workflow-node-bg border-workflow-node-border border rounded p-3 cursor-pointer hover:shadow-md transition-shadow';
     }
@@ -64,6 +67,32 @@ const WorkflowNode = ({ data }: NodeProps) => {
     );
   }
 
+  if (nodeData.type === 'entities-group') {
+    return (
+      <div className={getNodeStyles()} onClick={handleClick}>
+        <div className="text-sm font-medium text-black mb-2">
+          Modified Data Entities ▲
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {nodeData.entities?.map((entity) => {
+            const bgColor = entity.color === 'yellow' ? 'bg-yellow-400' : 'bg-gray-300';
+            return (
+              <div
+                key={entity.id}
+                className={`${bgColor} border border-gray-500 px-2 py-1 text-xs font-medium`}
+              >
+                <div className="flex items-center gap-1">
+                  <span>{entity.title}</span>
+                  <span className="text-xs">⋮</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   if (nodeData.type === 'workflow') {
     return (
       <div className={getNodeStyles()}>        
@@ -79,13 +108,6 @@ const WorkflowNode = ({ data }: NodeProps) => {
 
         <div className="space-y-4">
           {/* Stage and Enrich boxes will be positioned inside */}
-        </div>
-
-        {/* Modified Data Entities Label */}
-        <div className="absolute bottom-12 left-4">
-          <div className="text-xs font-medium text-black mb-1">
-            Modified Data Entities ▲
-          </div>
         </div>
       </div>
     );
