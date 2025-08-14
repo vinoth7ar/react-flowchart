@@ -83,17 +83,17 @@ const mockWorkflowData = {
 const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
   const nodes: Node[] = [];
 
-  // LSA Tag (outside workflow)
+  // PMF Tag (outside workflow)
   nodes.push({
-    id: 'lsa-tag',
+    id: 'pmf-tag',
     type: 'pmf-tag',
     position: { x: 50, y: 50 },
     data: {
-      title: 'LSA',
+      title: 'PMF',
       type: 'pmf-tag',
-      onClick: () => console.log('LSA tag clicked'),
+      onClick: () => console.log('PMF tag clicked'),
     } as WorkflowNodeData,
-    draggable: false,
+    draggable: true,
   });
 
   // Main workflow container
@@ -106,7 +106,8 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
       description: workflowData.workflow.description,
       type: 'workflow',
     } as WorkflowNodeData,
-    style: { width: 600, height: 350 },
+    style: { width: 700, height: 400 },
+    draggable: true,
   });
 
   // Stage nodes
@@ -124,7 +125,8 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
       } as WorkflowNodeData,
       parentId: workflowData.workflow.id,
       extent: 'parent',
-      style: { width: 250, height: 120 },
+      style: { width: 250, height: 100 },
+      draggable: true,
     });
   });
 
@@ -141,6 +143,7 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
       } as CircularNodeData,
       parentId: workflowData.workflow.id,
       extent: 'parent',
+      draggable: true,
     });
   });
 
