@@ -36,14 +36,14 @@ const mockWorkflowData = {
       id: 'stage-node',
       title: 'Stage',
       description: 'Base price data staging.',
-      position: { x: 50, y: 50 },
+      position: { x: 30, y: 70 },
       color: 'gray',
     },
     {
       id: 'enrich-node', 
       title: 'Enrich',
       description: 'Enriching base price details.',
-      position: { x: 400, y: 50 },
+      position: { x: 320, y: 70 },
       color: 'gray',
     }
   ],
@@ -51,13 +51,13 @@ const mockWorkflowData = {
     {
       id: 'base-staged-circle',
       label: 'base staged',
-      position: { x: 125, y: 180 },
+      position: { x: 105, y: 200 },
       color: 'gray',
     },
     {
       id: 'base-price-set-circle',
       label: 'base price set',
-      position: { x: 475, y: 180 },
+      position: { x: 395, y: 200 },
       color: 'gray',
     }
   ],
@@ -87,7 +87,7 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
   nodes.push({
     id: 'pmf-tag',
     type: 'pmf-tag',
-    position: { x: 50, y: 50 },
+    position: { x: 20, y: 20 },
     data: {
       title: 'PMF',
       type: 'pmf-tag',
@@ -100,13 +100,13 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
   nodes.push({
     id: workflowData.workflow.id,
     type: 'workflow',
-    position: { x: 100, y: 100 },
+    position: { x: 20, y: 60 },
     data: {
       title: workflowData.workflow.title,
       description: workflowData.workflow.description,
       type: 'workflow',
     } as WorkflowNodeData,
-    style: { width: 700, height: 400 },
+    style: { width: 800, height: 450 },
     draggable: true,
   });
 
@@ -125,7 +125,7 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
       } as WorkflowNodeData,
       parentId: workflowData.workflow.id,
       extent: 'parent',
-      style: { width: 250, height: 100 },
+      style: { width: 220, height: 90 },
       draggable: true,
     });
   });
@@ -185,8 +185,8 @@ const WorkflowBuilder = () => {
     const entityNodes: Node[] = [];
 
     mockWorkflowData.entities.forEach((entity, index) => {
-      const x = 50 + index * 200;
-      const y = 320;
+      const x = 30 + index * 180;
+      const y = 350;
 
       entityNodes.push({
         id: entity.id,
@@ -217,7 +217,7 @@ const WorkflowBuilder = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Main Canvas */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-2">
         <ReactFlow
           nodes={allNodes}
           edges={edges}
@@ -227,14 +227,14 @@ const WorkflowBuilder = () => {
           nodeTypes={nodeTypes}
           fitView
           className="bg-gray-100"
-          defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+          defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
           nodesDraggable={true}
           nodesConnectable={true}
           elementsSelectable={true}
         >
           <Background 
             color="#d1d5db" 
-            gap={20}
+            gap={16}
             size={1}
           />
           <Controls className="bg-white border border-gray-300 shadow-lg" />

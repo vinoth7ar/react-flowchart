@@ -18,17 +18,17 @@ const WorkflowNode = ({ data }: NodeProps) => {
   const getNodeStyles = () => {
     switch (nodeData.type) {
       case 'workflow':
-        return 'bg-gray-200 border-2 border-dotted border-gray-500 rounded-lg min-w-[700px] min-h-[400px] p-8 relative';
+        return 'bg-gray-200 border-2 border-dotted border-gray-500 rounded-lg min-w-[800px] min-h-[450px] p-4 relative';
       case 'stage':
-        return 'bg-white border border-gray-400 rounded p-4 min-w-[250px] min-h-[100px] cursor-pointer hover:shadow-md transition-shadow';
+        return 'bg-white border border-gray-400 rounded p-3 min-w-[220px] min-h-[90px] cursor-pointer hover:shadow-md transition-shadow';
       case 'data':
         let bgColor = 'bg-gray-300';
         if (nodeData.color === 'yellow') {
           bgColor = 'bg-yellow-400';
         }
-        return `${bgColor} border border-gray-500 px-4 py-3 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow`;
+        return `${bgColor} border border-gray-500 px-3 py-2 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow`;
       case 'pmf-tag':
-        return 'bg-black text-white px-3 py-2 text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity';
+        return 'bg-black text-white px-2 py-1 text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity';
       case 'process':
         return 'bg-workflow-process-bg text-workflow-process-text border-workflow-stage-border border rounded px-3 py-1 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow';
       default:
@@ -67,23 +67,23 @@ const WorkflowNode = ({ data }: NodeProps) => {
   if (nodeData.type === 'workflow') {
     return (
       <div className={getNodeStyles()}>        
-        <div className="text-2xl font-bold text-black mb-2">
+        <div className="text-xl font-bold text-black mb-1">
           {nodeData.title}
         </div>
         
         {nodeData.description && (
-          <div className="text-base text-black mb-8">
+          <div className="text-sm text-black mb-4">
             {nodeData.description}
           </div>
         )}
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Stage and Enrich boxes will be positioned inside */}
         </div>
 
         {/* Modified Data Entities Label */}
-        <div className="absolute bottom-16 left-4">
-          <div className="text-sm font-medium text-black mb-2">
+        <div className="absolute bottom-12 left-4">
+          <div className="text-xs font-medium text-black mb-1">
             Modified Data Entities ▲
           </div>
         </div>
@@ -93,11 +93,11 @@ const WorkflowNode = ({ data }: NodeProps) => {
 
   return (
     <div className={getNodeStyles()} onClick={handleClick}>
-      <div className="text-lg font-bold text-foreground mb-3">
+      <div className="text-sm font-bold text-foreground mb-1">
         {nodeData.title}
       </div>
       {nodeData.description && (
-        <div className="text-sm text-foreground leading-relaxed">
+        <div className="text-xs text-foreground leading-tight">
           {nodeData.description}
         </div>
       )}
