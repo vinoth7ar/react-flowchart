@@ -191,6 +191,8 @@ const WorkflowBuilder = () => {
         title: 'Data Entities',
         type: 'entities-group',
         entities: mockWorkflowData.entities,
+        entitiesExpanded: entitiesExpanded,
+        onToggleEntities: () => setEntitiesExpanded(!entitiesExpanded),
         onClick: () => console.log('Entities group clicked'),
       } as WorkflowNodeData,
       parentId: mockWorkflowData.workflow.id,
@@ -202,7 +204,7 @@ const WorkflowBuilder = () => {
       const filteredNodes = currentNodes.filter(n => n.id !== 'entities-group');
       return [...filteredNodes, entitiesGroupNode];
     });
-  }, [setNodes]);
+  }, [setNodes, entitiesExpanded]);
 
   return (
     <div className="flex h-screen bg-gray-100">

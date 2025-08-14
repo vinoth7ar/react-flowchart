@@ -68,27 +68,42 @@ const WorkflowNode = ({ data }: NodeProps) => {
   }
 
   if (nodeData.type === 'entities-group') {
+    const handleIconClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (nodeData.onToggleEntities) {
+        nodeData.onToggleEntities();
+      }
+    };
+
     return (
       <div className={getNodeStyles()} onClick={handleClick}>
-        <div className="text-sm font-medium text-black mb-2">
-          Modified Data Entities ▲
+        <div className="text-sm font-medium text-black mb-2 flex items-center gap-2">
+          <span 
+            className="cursor-pointer select-none"
+            onClick={handleIconClick}
+          >
+            {nodeData.entitiesExpanded ? '▼' : '▲'}
+          </span>
+          <span>Modified Data Entities</span>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {nodeData.entities?.map((entity) => {
-            const bgColor = entity.color === 'yellow' ? 'bg-yellow-400' : 'bg-gray-300';
-            return (
-              <div
-                key={entity.id}
-                className={`${bgColor} border border-gray-500 px-2 py-1 text-xs font-medium`}
-              >
-                <div className="flex items-center gap-1">
-                  <span>{entity.title}</span>
-                  <span className="text-xs">⋮</span>
+        {nodeData.entitiesExpanded && (
+          <div className="flex flex-wrap gap-2">
+            {nodeData.entities?.map((entity) => {
+              const bgColor = entity.color === 'yellow' ? 'bg-yellow-400' : 'bg-gray-300';
+              return (
+                <div
+                  key={entity.id}
+                  className={`${bgColor} border border-gray-500 px-2 py-1 text-xs font-medium`}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>{entity.title}</span>
+                    <span className="text-xs">⋮</span>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   }
