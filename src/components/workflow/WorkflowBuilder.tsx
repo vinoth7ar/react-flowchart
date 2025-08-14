@@ -28,54 +28,54 @@ const nodeTypes = {
 const mockWorkflowData = {
   workflow: {
     id: 'main-workflow',
-    title: 'Commitment',
-    description: '',
+    title: 'Hypo Loan Base Price',
+    description: 'Workflow description',
   },
   stages: [
     {
-      id: 'create-node',
-      title: 'Create',
-      description: 'Seller enters commitment details in contract takeout screen. 5 hypo loans are created with base prices.',
+      id: 'stage-node',
+      title: 'Stage',
+      description: 'Base price data staging.',
       position: { x: 50, y: 50 },
-      color: 'green',
+      color: 'gray',
     },
     {
-      id: 'accept-node', 
-      title: 'Accept',
-      description: '',
+      id: 'enrich-node', 
+      title: 'Enrich',
+      description: 'Enriching base price details.',
       position: { x: 400, y: 50 },
-      color: 'blue',
+      color: 'gray',
     }
   ],
   statusNodes: [
     {
-      id: 'created-circle',
-      label: 'created',
-      position: { x: 150, y: 150 },
-      color: 'green',
+      id: 'base-staged-circle',
+      label: 'base staged',
+      position: { x: 125, y: 180 },
+      color: 'gray',
     },
     {
-      id: 'accepted-circle',
-      label: 'accepted',
-      position: { x: 450, y: 150 },
+      id: 'base-price-set-circle',
+      label: 'base price set',
+      position: { x: 475, y: 180 },
       color: 'gray',
     }
   ],
   entities: [
     {
       id: 'data-entity-1',
-      title: 'Loan Commitment',
-      color: 'yellow',
+      title: 'Hypo Loan Position',
+      color: 'gray',
     },
     {
       id: 'data-entity-2', 
-      title: 'Hypo Loan Position',
-      color: 'white',
+      title: 'Loan Commitment',
+      color: 'gray',
     },
     {
       id: 'data-entity-3',
       title: 'Hypo Loan Base Price',
-      color: 'white',
+      color: 'yellow',
     }
   ]
 };
@@ -151,18 +151,18 @@ const initialNodes = createInitialNodes(mockWorkflowData);
 
 const initialEdges: Edge[] = [
   {
-    id: 'create-to-created',
-    source: 'create-node',
-    target: 'created-circle',
-    style: { stroke: '#000', strokeWidth: 2 },
-    type: 'straight',
+    id: 'stage-to-staged',
+    source: 'stage-node',
+    target: 'base-staged-circle',
+    style: { stroke: '#000', strokeWidth: 1 },
+    type: 'smoothstep',
   },
   {
-    id: 'accept-to-accepted',
-    source: 'accept-node',
-    target: 'accepted-circle',
-    style: { stroke: '#000', strokeWidth: 2 },
-    type: 'straight',
+    id: 'enrich-to-set',
+    source: 'enrich-node',
+    target: 'base-price-set-circle',
+    style: { stroke: '#000', strokeWidth: 1 },
+    type: 'smoothstep',
   },
 ];
 
@@ -177,20 +177,13 @@ const WorkflowBuilder = () => {
     [setEdges]
   );
 
-  // Create data entity nodes dynamically based on expansion state
+  // Create data entity nodes - always show them
   const createEntityNodes = (): Node[] => {
-    if (!entitiesExpanded) return [];
-    
     const entityNodes: Node[] = [];
-    const entitiesPerRow = 3;
-    const entityWidth = 160;
-    const entitySpacing = 20;
-    const startX = 80;
-    const startY = 280;
 
     mockWorkflowData.entities.forEach((entity, index) => {
-      const x = 50 + index * 180;
-      const y = 250;
+      const x = 50 + index * 200;
+      const y = 320;
 
       entityNodes.push({
         id: entity.id,
@@ -212,27 +205,16 @@ const WorkflowBuilder = () => {
     return entityNodes;
   };
 
-  // Update main workflow node with expand/collapse button
-  const workflowNodeWithButton: Node = {
-    ...initialNodes.find(n => n.id === mockWorkflowData.workflow.id)!,
-    data: {
-      ...initialNodes.find(n => n.id === mockWorkflowData.workflow.id)!.data,
-      entitiesExpanded,
-      onToggleEntities: () => setEntitiesExpanded(!entitiesExpanded),
-    }
-  };
-
   // Combine all nodes
   const allNodes = [
-    ...initialNodes.filter(n => n.id !== mockWorkflowData.workflow.id),
-    workflowNodeWithButton,
+    ...initialNodes,
     ...createEntityNodes(),
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-100">
       {/* Main Canvas */}
-      <div className="flex-1">
+      <div className="flex-1 p-6">
         <ReactFlow
           nodes={allNodes}
           edges={edges}
@@ -241,15 +223,15 @@ const WorkflowBuilder = () => {
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           fitView
-          className="bg-white"
-          defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
+          className="bg-gray-100"
+          defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
           nodesDraggable={true}
           nodesConnectable={true}
           elementsSelectable={true}
         >
           <Background 
-            color="#e5e7eb" 
-            gap={25}
+            color="#d1d5db" 
+            gap={20}
             size={1}
           />
           <Controls className="bg-white border border-gray-300 shadow-lg" />
