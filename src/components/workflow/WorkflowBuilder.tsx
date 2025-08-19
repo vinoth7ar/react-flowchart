@@ -99,9 +99,9 @@ const WorkflowBuilder = ({
   }, [currentWorkflowData, setEdges]);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen w-full bg-gray-100">
       {/* Main Canvas */}
-      <div className="flex-1 p-2">
+      <div className="flex-1 h-full p-2">
         <ReactFlow
           nodes={nodes}
           edges={edges}
