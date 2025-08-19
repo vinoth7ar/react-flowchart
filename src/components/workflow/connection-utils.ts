@@ -3,7 +3,7 @@ import { WorkflowData } from './types';
 
 export const generateIntelligentConnections = (workflowData: WorkflowData): Edge[] => {
   const edges: Edge[] = [];
-  const { stages, statusNodes, entities } = workflowData;
+  const { stages, statusNodes } = workflowData;
 
   // Connect stages to their corresponding status nodes
   stages.forEach((stage, index) => {
@@ -23,33 +23,17 @@ export const generateIntelligentConnections = (workflowData: WorkflowData): Edge
     }
   });
 
-  // Connect status nodes to entities they affect
-  statusNodes.forEach((statusNode) => {
-    // If explicitly defined connections exist, use them
-    if (statusNode.connectedToEntities && statusNode.connectedToEntities.length > 0) {
-      statusNode.connectedToEntities.forEach(entityId => {
-        const entity = entities.find(e => e.id === entityId);
-        if (entity) {
-          edges.push({
-            id: `${statusNode.id}-to-entities-${entityId}`,
-            source: statusNode.id,
-            target: 'entities-group',
-            style: { stroke: '#666', strokeWidth: 1 },
-            type: 'smoothstep',
-          });
-        }
+  // Connect status nodes to next stages in sequence
+  statusNodes.forEach((statusNode, index) => {
+    const nextStage = stages[index + 1];
+    if (nextStage) {
+      edges.push({
+        id: `${statusNode.id}-to-${nextStage.id}`,
+        source: statusNode.id,
+        target: nextStage.id,
+        style: { stroke: '#666', strokeWidth: 1 },
+        type: 'smoothstep',
       });
-    } else {
-      // Default: connect to entities group if entities exist
-      if (entities.length > 0) {
-        edges.push({
-          id: `${statusNode.id}-to-entities`,
-          source: statusNode.id,
-          target: 'entities-group',
-          style: { stroke: '#666', strokeWidth: 1 },
-          type: 'smoothstep',
-        });
-      }
     }
   });
 
