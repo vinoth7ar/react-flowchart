@@ -1461,7 +1461,28 @@ function TabPanel({ children, value, index, ...other }: TabPanelProps) {
 
 export function SelectionPage() {
   const navigate = useNavigate();
-  const { selection, updateSelection, updateCustomizations } = useSelection();
+  
+  // Add error boundary to catch context issues
+  let contextData;
+  try {
+    contextData = useSelection();
+  } catch (error) {
+    console.error('SelectionPage: useSelection error:', error);
+    return (
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Paper sx={{ p: 3 }}>
+          <Typography variant="h6" color="error">
+            Context Error: {error instanceof Error ? error.message : 'Unknown error'}
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            Make sure this component is wrapped with SelectionProvider
+          </Typography>
+        </Paper>
+      </Container>
+    );
+  }
+  
+  const { selection, updateSelection, updateCustomizations } = contextData;
   const { workflows, entities } = useAvailableOptions();
   const [activeTab, setActiveTab] = useState(0);
 
@@ -1584,7 +1605,28 @@ export function SelectionPage() {
 export function VisualizationPage() {
   const { type, id } = useParams<{ type: string; id: string }>();
   const navigate = useNavigate();
-  const { selection, updateSelection } = useSelection();
+  
+  // Add error boundary to catch context issues
+  let contextData;
+  try {
+    contextData = useSelection();
+  } catch (error) {
+    console.error('VisualizationPage: useSelection error:', error);
+    return (
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Paper sx={{ p: 3 }}>
+          <Typography variant="h6" color="error">
+            Context Error: {error instanceof Error ? error.message : 'Unknown error'}
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            Make sure this component is wrapped with SelectionProvider
+          </Typography>
+        </Paper>
+      </Container>
+    );
+  }
+  
+  const { selection, updateSelection } = contextData;
   const availableWorkflows = useAvailableWorkflows();
   
   // Get workflow data based on URL params (handles backend integration)
