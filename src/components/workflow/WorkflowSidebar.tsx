@@ -1,6 +1,11 @@
 import { Card } from '@/components/ui/card';
 
-const WorkflowSidebar = () => {
+interface WorkflowSidebarProps {
+  selectedWorkflow: string;
+  onWorkflowSelect: (workflowId: string) => void;
+}
+
+const WorkflowSidebar = ({ selectedWorkflow, onWorkflowSelect }: WorkflowSidebarProps) => {
   const legendItems = [
     { color: 'bg-primary', label: 'Application' },
     { color: 'bg-workflow-stage-bg border border-workflow-stage-border', label: 'Workflow' },
@@ -9,10 +14,10 @@ const WorkflowSidebar = () => {
   ];
 
   const workflows = [
-    'Workflow Name',
-    'Workflow Name',
-    'Workflow Name',
-    'Workflow Name',
+    { id: 'hypo-loan-position', name: 'Hypo Loan Position' },
+    { id: 'hypo-loan', name: 'Hypo Loan' },
+    { id: 'workflow-1', name: 'Customer Onboarding' },
+    { id: 'workflow-2', name: 'Payment Processing' },
   ];
 
   return (
@@ -46,12 +51,17 @@ const WorkflowSidebar = () => {
           Choose a different workflow to visualize
         </p>
         <div className="space-y-2">
-          {workflows.map((workflow, index) => (
+          {workflows.map((workflow) => (
             <div
-              key={index}
-              className="bg-workflow-stage-bg border border-workflow-stage-border rounded p-3 text-xs font-medium text-center cursor-pointer hover:bg-workflow-stage-border/20 transition-colors"
+              key={workflow.id}
+              className={`bg-workflow-stage-bg border rounded p-3 text-xs font-medium text-center cursor-pointer transition-colors ${
+                selectedWorkflow === workflow.id 
+                  ? 'border-primary bg-primary/10 text-primary' 
+                  : 'border-workflow-stage-border hover:bg-workflow-stage-border/20'
+              }`}
+              onClick={() => onWorkflowSelect(workflow.id)}
             >
-              {workflow}
+              {workflow.name}
             </div>
           ))}
         </div>
