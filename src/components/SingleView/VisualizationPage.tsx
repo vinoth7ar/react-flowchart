@@ -2,18 +2,25 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useSelection } from './context/SelectionContext';
-import { useWorkflowData } from './hooks/useWorkflowData';
+import { useWorkflowData, useAvailableWorkflows } from './hooks/useWorkflowData';
 import WorkflowHeader from '@/components/workflow/WorkflowHeader';
 import WorkflowBuilder from '@/components/workflow/WorkflowBuilder';
+import WorkflowSidebar from '@/components/workflow/WorkflowSidebar';
 import { ArrowLeft, Settings } from 'lucide-react';
 
 export default function VisualizationPage() {
   const { type, id } = useParams<{ type: 'workflow' | 'entity'; id: string }>();
   const navigate = useNavigate();
   const { selection, updateSelection } = useSelection();
+  const availableWorkflows = useAvailableWorkflows();
   
-  // Get workflow data based on URL params
+  // Get workflow data based on URL params (handles backend integration)
   const workflowData = useWorkflowData(type || null, id || null);
+
+  // Handle workflow switching from sidebar
+  const handleWorkflowSelect = (workflowId: string) => {
+    navigate(`/visualization/workflow/${workflowId}`);
+  };
 
   // Sync URL params with selection context
   useEffect(() => {
@@ -95,11 +102,20 @@ export default function VisualizationPage() {
         </div>
       </header>
 
-      {/* Workflow Visualization */}
-      <div className="flex-1">
-        <WorkflowBuilder 
-          selectedWorkflowId={id}
-          workflowData={workflowData}
+      {/* Main Content with Sidebar */}
+      <div className="flex flex-1">
+        {/* Workflow Visualization */}
+        <div className="flex-1">
+          <WorkflowBuilder 
+            selectedWorkflowId={id}
+            workflowData={workflowData}
+          />
+        </div>
+
+        {/* Sidebar for switching workflows */}
+        <WorkflowSidebar 
+          selectedWorkflow={id || ''}
+          onWorkflowSelect={handleWorkflowSelect}
         />
       </div>
     </div>

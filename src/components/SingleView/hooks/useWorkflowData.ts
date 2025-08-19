@@ -1,22 +1,62 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { mockWorkflows } from '@/components/workflow/mock-data';
 import { WorkflowData } from '@/components/workflow/types';
 
+// Backend integration hook
 export function useWorkflowData(type: 'workflow' | 'entity' | null, id: string | null): WorkflowData | null {
-  return useMemo(() => {
-    if (!type || !id) return null;
+  const [backendData, setBackendData] = useState<WorkflowData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    // For MVP, we're only handling workflows from mock data
-    // In the future, this can be extended to handle entities differently
-    const workflowData = mockWorkflows[id];
-    
-    if (!workflowData) {
-      console.warn(`No workflow data found for id: ${id}`);
+  // Function to fetch from backend
+  const fetchWorkflowFromBackend = async (workflowId: string): Promise<WorkflowData | null> => {
+    try {
+      // TODO: Replace with actual backend API call
+      // const response = await fetch(`/api/workflows/${workflowId}`);
+      // const data = await response.json();
+      // return data;
+      
+      // For now, simulate backend delay and return mock data
+      await new Promise(resolve => setTimeout(resolve, 100));
+      return mockWorkflows[workflowId] || null;
+    } catch (err) {
+      console.error('Failed to fetch workflow from backend:', err);
       return null;
     }
+  };
 
-    return workflowData;
+  // Effect to load data when type/id changes
+  useEffect(() => {
+    if (!type || !id) {
+      setBackendData(null);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    fetchWorkflowFromBackend(id)
+      .then(data => {
+        setBackendData(data);
+        if (!data) {
+          setError(`No ${type} found with id: ${id}`);
+        }
+      })
+      .catch(err => {
+        setError(err.message);
+        setBackendData(null);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [type, id]);
+
+  return useMemo(() => {
+    if (!type || !id) return null;
+    
+    // Return backend data if available, otherwise fallback to mock data
+    return backendData || mockWorkflows[id] || null;
+  }, [type, id, backendData]);
 }
 
 export function useAvailableOptions() {
@@ -37,5 +77,16 @@ export function useAvailableOptions() {
       workflows: workflowOptions,
       entities: entityOptions,
     };
+  }, []);
+}
+
+// Hook to get available workflows for sidebar
+export function useAvailableWorkflows() {
+  return useMemo(() => {
+    return Object.entries(mockWorkflows).map(([id, data]) => ({
+      id,
+      title: data.workflow.title,
+      description: data.workflow.description,
+    }));
   }, []);
 }
