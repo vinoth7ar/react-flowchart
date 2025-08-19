@@ -19,21 +19,21 @@ const WorkflowNode = ({ data }: NodeProps) => {
   const getNodeStyles = () => {
     switch (nodeData.type) {
       case 'workflow':
-        return 'bg-gray-200 border-2 border-dotted border-gray-500 rounded-lg min-w-[800px] min-h-[450px] p-4 relative';
+        return 'bg-workflow-canvas border-2 border-dashed border-workflow-border rounded-lg min-w-[800px] min-h-[450px] p-6 relative';
       case 'stage':
-        return 'bg-white border border-gray-400 rounded p-3 min-w-[220px] min-h-[90px] cursor-pointer hover:shadow-md transition-shadow';
+        return 'bg-workflow-node-bg border border-workflow-stage-border rounded-sm p-4 min-w-[240px] min-h-[100px] cursor-pointer hover:shadow-lg transition-all duration-200 shadow-sm';
       case 'data':
-        let bgColor = 'bg-gray-300';
+        let bgColor = 'bg-workflow-data-bg';
         if (nodeData.color === 'yellow') {
-          bgColor = 'bg-yellow-400';
+          bgColor = 'bg-workflow-data-bg';
         }
-        return `${bgColor} border border-gray-500 px-3 py-2 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow`;
+        return `${bgColor} border border-workflow-data-border px-4 py-2 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow transform rotate-[-2deg] shadow-sm`;
       case 'pmf-tag':
-        return 'bg-black text-white px-2 py-1 text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity';
+        return 'bg-workflow-pmf-bg text-workflow-pmf-text px-3 py-1 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity transform skew-x-[15deg] shadow-md';
       case 'process':
         return 'bg-workflow-process-bg text-workflow-process-text border-workflow-stage-border border rounded px-3 py-1 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow';
       case 'entities-group':
-        return 'bg-white border border-gray-300 rounded p-3 min-w-[500px] cursor-pointer hover:shadow-md transition-shadow';
+        return 'bg-workflow-node-bg border border-workflow-stage-border rounded-sm p-4 min-w-[520px] cursor-pointer hover:shadow-lg transition-all duration-200 shadow-sm';
       default:
         return 'bg-workflow-node-bg border-workflow-node-border border rounded p-3 cursor-pointer hover:shadow-md transition-shadow';
     }
@@ -49,7 +49,7 @@ const WorkflowNode = ({ data }: NodeProps) => {
   if (nodeData.type === 'pmf-tag') {
     return (
       <div className={getNodeStyles()} onClick={handleClick}>
-        <div className="transform skew-x-[15deg]">
+        <div className="font-bold">
           {nodeData.title}
         </div>
       </div>
@@ -60,8 +60,8 @@ const WorkflowNode = ({ data }: NodeProps) => {
     return (
       <div className={getNodeStyles()} onClick={handleClick}>
         <div className="flex items-center gap-2">
-          <span>{nodeData.title}</span>
-          <span className="text-xs">⋮</span>
+          <span className="font-medium">{nodeData.title}</span>
+          <span className="text-xs font-bold">⋮</span>
         </div>
       </div>
     );
@@ -77,9 +77,9 @@ const WorkflowNode = ({ data }: NodeProps) => {
 
     return (
       <div className={getNodeStyles()} onClick={handleClick}>
-        <div className="text-sm font-medium text-black mb-2 flex items-center gap-2">
+        <div className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <span 
-            className="cursor-pointer select-none"
+            className="cursor-pointer select-none text-lg leading-none"
             onClick={handleIconClick}
           >
             {nodeData.entitiesExpanded ? '▼' : '▲'}
@@ -87,17 +87,18 @@ const WorkflowNode = ({ data }: NodeProps) => {
           <span>Modified Data Entities</span>
         </div>
         {nodeData.entitiesExpanded && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3">
             {nodeData.entities?.map((entity) => {
-              const bgColor = entity.color === 'yellow' ? 'bg-yellow-400' : 'bg-gray-300';
+              const bgColor = entity.color === 'yellow' ? 'bg-workflow-data-bg' : 'bg-muted';
+              const borderColor = entity.color === 'yellow' ? 'border-workflow-data-border' : 'border-border';
               return (
                 <div
                   key={entity.id}
-                  className={`${bgColor} border border-gray-500 px-2 py-1 text-xs font-medium`}
+                  className={`${bgColor} ${borderColor} border px-3 py-2 text-sm font-medium transform rotate-[-2deg] shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
                 >
                   <div className="flex items-center gap-1">
                     <span>{entity.title}</span>
-                    <span className="text-xs">⋮</span>
+                    <span className="text-xs font-bold">⋮</span>
                   </div>
                 </div>
               );
@@ -111,12 +112,12 @@ const WorkflowNode = ({ data }: NodeProps) => {
   if (nodeData.type === 'workflow') {
     return (
       <div className={getNodeStyles()}>        
-        <div className="text-xl font-bold text-black mb-1">
+        <div className="text-xl font-bold text-foreground mb-2">
           {nodeData.title}
         </div>
         
         {nodeData.description && (
-          <div className="text-sm text-black mb-4">
+          <div className="text-sm text-muted-foreground mb-6">
             {nodeData.description}
           </div>
         )}
@@ -130,17 +131,17 @@ const WorkflowNode = ({ data }: NodeProps) => {
 
   return (
     <div className={getNodeStyles()} onClick={handleClick}>
-      <div className="text-sm font-bold text-foreground mb-1">
+      <div className="text-sm font-bold text-foreground mb-2">
         {nodeData.title}
       </div>
       {nodeData.description && (
-        <div className="text-xs text-foreground leading-tight">
+        <div className="text-xs text-muted-foreground leading-tight">
           {nodeData.description}
         </div>
       )}
       
-      <Handle type="target" position={Position.Top} className="w-3 h-3 bg-workflow-border rounded-none border-2 border-workflow-border" />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3 bg-workflow-border rounded-none border-2 border-workflow-border" />
+      <Handle type="target" position={Position.Top} className="w-2 h-2 bg-workflow-border rounded-none border border-workflow-border opacity-0" />
+      <Handle type="source" position={Position.Bottom} className="w-2 h-2 bg-workflow-border rounded-none border border-workflow-border opacity-0" />
     </div>
   );
 };

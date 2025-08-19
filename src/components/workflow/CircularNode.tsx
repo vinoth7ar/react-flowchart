@@ -18,7 +18,7 @@ const CircularNode = ({ data }: NodeProps) => {
   };
 
   const getCircleStyles = () => {
-    return 'w-16 h-16 rounded-full bg-gray-300 border border-gray-500 flex items-center justify-center shadow-sm cursor-pointer hover:shadow-md transition-shadow';
+    return 'w-16 h-16 rounded-full bg-workflow-circular border border-workflow-circular-border flex items-center justify-center shadow-md cursor-pointer hover:shadow-lg transition-all duration-200';
   };
 
   return (
@@ -26,12 +26,12 @@ const CircularNode = ({ data }: NodeProps) => {
       className={getCircleStyles()}
       onClick={handleClick}
     >
-      <div className="text-[10px] font-medium text-center text-black px-1 leading-tight">
+      <div className="text-[10px] font-bold text-center text-foreground px-1 leading-tight">
         {nodeData.label}
       </div>
       
-      <Handle type="target" position={Position.Top} className="w-3 h-3 bg-workflow-border rounded-none border-2 border-workflow-border" />
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3 bg-workflow-border rounded-none border-2 border-workflow-border" />
+      <Handle type="target" position={Position.Top} className="w-2 h-2 bg-workflow-border rounded-none border border-workflow-border opacity-0" />
+      <Handle type="source" position={Position.Bottom} className="w-2 h-2 bg-workflow-border rounded-none border border-workflow-border opacity-0" />
     </div>
   );
 };
