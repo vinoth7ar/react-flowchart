@@ -104,6 +104,7 @@ const WorkflowNode = ({ data }: NodeProps) => {
             })}
           </div>
         )}
+        <Handle type="target" position={Position.Top} className="w-3 h-3 bg-workflow-border rounded-none border-2 border-workflow-border" />
       </div>
     );
   }
