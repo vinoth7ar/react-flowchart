@@ -37,14 +37,12 @@ const mockWorkflowData = {
       id: 'stage-node',
       title: 'Stage',
       description: 'PLMF stages commitment data in PMF database.',
-      position: { x: 30, y: 70 },
       color: 'gray',
     },
     {
       id: 'enrich-node', 
       title: 'Enrich',
       description: 'PMF enriches hypo loan positions.',
-      position: { x: 320, y: 70 },
       color: 'gray',
     }
   ],
@@ -52,13 +50,11 @@ const mockWorkflowData = {
     {
       id: 'staged-circle',
       label: 'staged',
-      position: { x: 105, y: 200 },
       color: 'gray',
     },
     {
       id: 'position-created-circle',
       label: 'position created',
-      position: { x: 395, y: 200 },
       color: 'gray',
     }
   ],
@@ -84,6 +80,19 @@ const mockWorkflowData = {
 const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
   const nodes: Node[] = [];
 
+  // Layout constants
+  const workflowWidth = 800;
+  const workflowHeight = 450;
+  const stageWidth = 220;
+  const stageHeight = 90;
+  const circleSize = 64;
+  
+  // Calculate dynamic positions
+  const stageSpacing = (workflowWidth - (2 * stageWidth) - 60) / 1; // Space between stages
+  const stageY = 70;
+  const circleY = stageY + stageHeight + 40;
+  const entitiesY = circleY + circleSize + 40;
+
   // PMF Tag (outside workflow)
   nodes.push({
     id: 'pmf-tag',
@@ -107,16 +116,18 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
       description: workflowData.workflow.description,
       type: 'workflow',
     } as WorkflowNodeData,
-    style: { width: 800, height: 450 },
+    style: { width: workflowWidth, height: workflowHeight },
     draggable: true,
   });
 
-  // Stage nodes
-  workflowData.stages.forEach(stage => {
+  // Stage nodes - positioned dynamically
+  workflowData.stages.forEach((stage, index) => {
+    const stageX = 30 + (index * (stageWidth + stageSpacing));
+    
     nodes.push({
       id: stage.id,
       type: 'stage',
-      position: stage.position,
+      position: { x: stageX, y: stageY },
       data: {
         title: stage.title,
         description: stage.description,
@@ -126,17 +137,19 @@ const createInitialNodes = (workflowData: typeof mockWorkflowData): Node[] => {
       } as WorkflowNodeData,
       parentId: workflowData.workflow.id,
       extent: 'parent',
-      style: { width: 220, height: 90 },
+      style: { width: stageWidth, height: stageHeight },
       draggable: true,
     });
   });
 
-  // Status nodes (circular)
-  workflowData.statusNodes.forEach(status => {
+  // Status nodes (circular) - positioned below stages
+  workflowData.statusNodes.forEach((status, index) => {
+    const circleX = 30 + (index * (stageWidth + stageSpacing)) + (stageWidth / 2) - (circleSize / 2);
+    
     nodes.push({
       id: status.id,
       type: 'circular',
-      position: status.position,
+      position: { x: circleX, y: circleY },
       data: {
         label: status.label,
         color: status.color,
