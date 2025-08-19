@@ -992,71 +992,8 @@ export interface WorkflowOption {
 }
 
 // ============================================================================
-// CONTEXT SECTION - Move to: src/components/SingleView/context/SelectionContext.tsx
+// REMOVED CONTEXT SECTION - Going directly to visualization
 // ============================================================================
-
-interface SelectionContextType {
-  selection: SelectionState;
-  updateSelection: (type: 'workflow' | 'entity', id: string) => void;
-  updateCustomizations: (customizations: Partial<ViewCustomizations>) => void;
-  clearSelection: () => void;
-}
-
-const SelectionContext = createContext<SelectionContextType | undefined>(undefined);
-
-const defaultCustomizations: ViewCustomizations = {
-  expandAllEntities: true,
-  showLegend: true,
-  showMiniMap: true,
-};
-
-const defaultSelection: SelectionState = {
-  selectedType: null,
-  selectedId: null,
-  customizations: defaultCustomizations,
-};
-
-export function SelectionProvider({ children }: { children: ReactNode }) {
-  const [selection, setSelection] = useState<SelectionState>(defaultSelection);
-
-  const updateSelection = (type: 'workflow' | 'entity', id: string) => {
-    setSelection(prev => ({
-      ...prev,
-      selectedType: type,
-      selectedId: id,
-    }));
-  };
-
-  const updateCustomizations = (customizations: Partial<ViewCustomizations>) => {
-    setSelection(prev => ({
-      ...prev,
-      customizations: { ...prev.customizations, ...customizations },
-    }));
-  };
-
-  const clearSelection = () => {
-    setSelection(defaultSelection);
-  };
-
-  return (
-    <SelectionContext.Provider value={{
-      selection,
-      updateSelection,
-      updateCustomizations,
-      clearSelection,
-    }}>
-      {children}
-    </SelectionContext.Provider>
-  );
-}
-
-export function useSelection() {
-  const context = useContext(SelectionContext);
-  if (context === undefined) {
-    throw new Error('useSelection must be used within a SelectionProvider');
-  }
-  return context;
-}
 
 // ============================================================================
 // HOOKS SECTION - Move to: src/components/SingleView/hooks/useWorkflowData.ts
@@ -1459,150 +1396,16 @@ function TabPanel({ children, value, index, ...other }: TabPanelProps) {
 // SELECTION PAGE COMPONENT - Move to: src/components/SingleView/SelectionPage.tsx
 // ============================================================================
 
-export function SelectionPage() {
-  const navigate = useNavigate();
-  
-  // Add error boundary to catch context issues
-  let contextData;
-  try {
-    contextData = useSelection();
-  } catch (error) {
-    console.error('SelectionPage: useSelection error:', error);
-    return (
-      <Container maxWidth="md" sx={{ py: 4 }}>
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" color="error">
-            Context Error: {error instanceof Error ? error.message : 'Unknown error'}
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 2 }}>
-            Make sure this component is wrapped with SelectionProvider
-          </Typography>
-        </Paper>
-      </Container>
-    );
-  }
-  
-  const { selection, updateSelection, updateCustomizations } = contextData;
-  const { workflows, entities } = useAvailableOptions();
-  const [activeTab, setActiveTab] = useState(0);
-
-  const handleWorkflowSelect = (id: string) => {
-    updateSelection('workflow', id);
-    setActiveTab(0);
-  };
-
-  const handleEntitySelect = (id: string) => {
-    updateSelection('entity', id);
-    setActiveTab(1);
-  };
-
-  const handleVisualize = () => {
-    if (selection.selectedType && selection.selectedId) {
-      navigate(`/visualization/${selection.selectedType}/${selection.selectedId}`);
-    }
-  };
-
-  const canVisualize = selection.selectedType && selection.selectedId;
-
-  return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      {/* Header */}
-      <AppBar position="static" color="transparent" elevation={1}>
-        <Toolbar>
-          <Button
-            startIcon={<ArrowBack />}
-            onClick={() => navigate('/')}
-            sx={{ mr: 2 }}
-          >
-            Back
-          </Button>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="h5" fontWeight="bold">
-              Pipeline Management Framework
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Select a workflow or entity to visualize
-            </Typography>
-          </Box>
-          <Button
-            variant="contained"
-            startIcon={<Visibility />}
-            onClick={handleVisualize}
-            disabled={!canVisualize}
-            size="large"
-          >
-            Visualize
-          </Button>
-        </Toolbar>
-      </AppBar>
-
-      {/* Main Content */}
-      <Container maxWidth="xl" sx={{ py: 4 }}>
-        <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', lg: 'row' } }}>
-          {/* Selection Panel */}
-          <Box sx={{ flex: '1 1 66%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)}>
-                <Tab label={`Workflows (${workflows.length})`} />
-                <Tab label={`Entities (${entities.length})`} />
-              </Tabs>
-            </Box>
-            
-            <TabPanel value={activeTab} index={0}>
-              <WorkflowSelector
-                workflows={workflows}
-                selectedId={selection.selectedType === 'workflow' ? selection.selectedId : null}
-                onSelect={handleWorkflowSelect}
-              />
-            </TabPanel>
-            
-            <TabPanel value={activeTab} index={1}>
-              <EntitySelector
-                entities={entities}
-                selectedId={selection.selectedType === 'entity' ? selection.selectedId : null}
-                onSelect={handleEntitySelect}
-              />
-            </TabPanel>
-          </Box>
-
-          {/* Customization Panel */}
-          <Box sx={{ flex: '1 1 33%' }}>
-            <Box sx={{ position: 'sticky', top: 32 }}>
-              <CustomizationPanel
-                customizations={selection.customizations}
-                onUpdate={updateCustomizations}
-              />
-              
-              {/* Selection Summary */}
-              {canVisualize && (
-                <Paper sx={{ mt: 3, p: 2, bgcolor: 'primary.50', border: 1, borderColor: 'primary.200' }}>
-                  <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1 }}>
-                    Selected for Visualization:
-                  </Typography>
-                  <Typography variant="body2">
-                    <Box component="span" sx={{ textTransform: 'capitalize' }}>
-                      {selection.selectedType}:
-                    </Box>{' '}
-                    {selection.selectedType === 'workflow' 
-                      ? workflows.find(w => w.id === selection.selectedId)?.title
-                      : entities.find(e => e.id === selection.selectedId)?.title
-                    }
-                  </Typography>
-                </Paper>
-              )}
-            </Box>
-          </Box>
-        </Box>
-      </Container>
-    </Box>
-  );
-}
+// ============================================================================
+// REMOVED SELECTION PAGE - Going directly to visualization  
+// ============================================================================
 
 // ============================================================================
 // VISUALIZATION PAGE COMPONENT - Move to: src/components/SingleView/VisualizationPage.tsx
 // ============================================================================
 
 export function VisualizationPage() {
+  console.log('VisualizationPage component starting...');
   const { type, id } = useParams<{ type: string; id: string }>();
   const navigate = useNavigate();
   
@@ -1610,11 +1413,11 @@ export function VisualizationPage() {
   const workflowId = id || 'workflow-1';
   const availableWorkflows = useAvailableWorkflows();
   
-  // Get workflow data based on URL params (handles backend integration)
+  // Get workflow data - use default workflow if no URL params
   const workflowData = useWorkflowData(
-    (type === 'workflow' || type === 'entity') ? type : null, 
-    id || null
-  );
+    'workflow', 
+    workflowId
+  ) || mockWorkflows[workflowId];
 
   // Handle workflow switching from sidebar
   const handleWorkflowSelect = (workflowId: string) => {
