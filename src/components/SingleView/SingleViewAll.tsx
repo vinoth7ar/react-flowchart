@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Eye, ArrowLeft, Settings, ArrowRight } from 'lucide-react';
 import { mockWorkflows } from '@/components/workflow/mock-data';
-import { WorkflowData } from '@/components/workflow/types';
+import { WorkflowData, LayoutConfig } from '@/components/workflow/types';
 import WorkflowBuilder from '@/components/workflow/WorkflowBuilder';
 
 // ============================================================================
@@ -577,13 +577,16 @@ export function SelectionPage() {
 // ============================================================================
 
 export function VisualizationPage() {
-  const { type, id } = useParams<{ type: 'workflow' | 'entity'; id: string }>();
+  const { type, id } = useParams<{ type: string; id: string }>();
   const navigate = useNavigate();
   const { selection, updateSelection } = useSelection();
   const availableWorkflows = useAvailableWorkflows();
   
   // Get workflow data based on URL params (handles backend integration)
-  const workflowData = useWorkflowData(type || null, id || null);
+  const workflowData = useWorkflowData(
+    (type === 'workflow' || type === 'entity') ? type : null, 
+    id || null
+  );
 
   // Handle workflow switching from sidebar
   const handleWorkflowSelect = (workflowId: string) => {
@@ -592,8 +595,10 @@ export function VisualizationPage() {
 
   // Sync URL params with selection context
   useEffect(() => {
-    if (type && id && (selection.selectedType !== type || selection.selectedId !== id)) {
-      updateSelection(type, id);
+    if (type && id && (type === 'workflow' || type === 'entity')) {
+      if (selection.selectedType !== type || selection.selectedId !== id) {
+        updateSelection(type, id);
+      }
     }
   }, [type, id, selection.selectedType, selection.selectedId, updateSelection]);
 
@@ -673,8 +678,8 @@ export function VisualizationPage() {
       {/* Workflow Visualization */}
       <div className="flex-1">
         <WorkflowBuilder 
-          selectedWorkflowId={id}
-          workflowData={workflowData}
+          selectedWorkflowId={id || undefined}
+          workflowData={workflowData || undefined}
           onWorkflowSelect={handleWorkflowSelect}
         />
       </div>
