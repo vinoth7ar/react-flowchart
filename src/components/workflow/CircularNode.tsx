@@ -8,7 +8,7 @@ export interface CircularNodeData extends Record<string, unknown> {
   color?: string;
 }
 
-const CircularNode = ({ data }: NodeProps<CircularNodeData>) => {
+const CircularNode = ({ data }: NodeProps) => {
   const nodeData = data as CircularNodeData;
   
   const handleClick = () => {

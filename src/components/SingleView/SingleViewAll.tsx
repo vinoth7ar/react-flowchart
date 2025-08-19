@@ -81,7 +81,7 @@ export interface CircularNodeData extends Record<string, unknown> {
 // WORKFLOW NODE COMPONENT (from WorkflowNode.tsx)
 // SPLIT TO: src/components/workflow/WorkflowNode.tsx
 // ===========================================
-const WorkflowNode = ({ data }: NodeProps<WorkflowNodeData>) => {
+const WorkflowNode = ({ data }: NodeProps) => {
   const nodeData = data as WorkflowNodeData;
   const getNodeStyles = () => {
     switch (nodeData.type) {
@@ -219,7 +219,7 @@ const MemoizedWorkflowNode = memo(WorkflowNode);
 // CIRCULAR NODE COMPONENT (from CircularNode.tsx)
 // SPLIT TO: src/components/workflow/CircularNode.tsx
 // ===========================================
-const CircularNode = ({ data }: NodeProps<CircularNodeData>) => {
+const CircularNode = ({ data }: NodeProps) => {
   const nodeData = data as CircularNodeData;
   
   const handleClick = () => {
