@@ -1,5 +1,5 @@
 // ============================================================================
-// SINGLE VIEW - ALL IN ONE FILE (Material UI Version)
+// SINGLE VIEW - ALL IN ONE FILE (Material UI Version - Fixed)
 // ============================================================================
 // This file contains the complete SingleView functionality using only Material UI components.
 // It can be split into separate files later using the comment sections below.
@@ -31,9 +31,7 @@ import {
   Visibility,
   ArrowBack,
   Settings,
-  ArrowForward,
-  AccountTree,
-  Business
+  ArrowForward
 } from '@mui/icons-material';
 import { mockWorkflows } from '@/components/workflow/mock-data';
 import { WorkflowData, LayoutConfig } from '@/components/workflow/types';
