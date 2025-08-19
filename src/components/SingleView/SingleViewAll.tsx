@@ -1606,27 +1606,8 @@ export function VisualizationPage() {
   const { type, id } = useParams<{ type: string; id: string }>();
   const navigate = useNavigate();
   
-  // Add error boundary to catch context issues
-  let contextData;
-  try {
-    contextData = useSelection();
-  } catch (error) {
-    console.error('VisualizationPage: useSelection error:', error);
-    return (
-      <Container maxWidth="md" sx={{ py: 4 }}>
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" color="error">
-            Context Error: {error instanceof Error ? error.message : 'Unknown error'}
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 2 }}>
-            Make sure this component is wrapped with SelectionProvider
-          </Typography>
-        </Paper>
-      </Container>
-    );
-  }
-  
-  const { selection, updateSelection } = contextData;
+  // Default to first workflow if no URL params
+  const workflowId = id || 'workflow-1';
   const availableWorkflows = useAvailableWorkflows();
   
   // Get workflow data based on URL params (handles backend integration)
@@ -1640,47 +1621,19 @@ export function VisualizationPage() {
     navigate(`/visualization/workflow/${workflowId}`);
   };
 
-  // Sync URL params with selection context
-  useEffect(() => {
-    if (type && id && (type === 'workflow' || type === 'entity')) {
-      if (selection.selectedType !== type || selection.selectedId !== id) {
-        updateSelection(type, id);
-      }
-    }
-  }, [type, id, selection.selectedType, selection.selectedId, updateSelection]);
-
-  // Handle missing data
-  if (!type || !id) {
-    return (
-      <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
-            Invalid URL
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            Please select a workflow or entity to visualize
-          </Typography>
-          <Button variant="contained" onClick={() => navigate('/selection')}>
-            Go to Selection
-          </Button>
-        </Paper>
-      </Box>
-    );
-  }
+  // Display the workflow visualization directly
+  const displayWorkflowId = workflowId;
 
   if (!workflowData) {
     return (
       <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
-            {type === 'workflow' ? 'Workflow' : 'Entity'} Not Found
+            Workflow Not Found
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            The {type} "{id}" could not be loaded
+            The workflow "{displayWorkflowId}" could not be loaded
           </Typography>
-          <Button variant="contained" onClick={() => navigate('/selection')}>
-            Back to Selection
-          </Button>
         </Paper>
       </Box>
     );
@@ -1688,39 +1641,20 @@ export function VisualizationPage() {
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Enhanced Header with Navigation */}
+      {/* Enhanced Header */}
       <AppBar position="static" color="transparent" elevation={1}>
         <Toolbar>
-          <Button
-            startIcon={<ArrowBack />}
-            onClick={() => navigate('/selection')}
-            sx={{ mr: 2 }}
-          >
-            Back to Selection
-          </Button>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="h6" fontWeight="bold">
-              {workflowData.workflow.title}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {type === 'workflow' ? 'Workflow' : 'Entity'} Visualization
-            </Typography>
-          </Box>
-          <Button
-            variant="outlined"
-            startIcon={<Settings />}
-            onClick={() => navigate('/selection')}
-          >
-            Change Selection
-          </Button>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Workflow Visualization - {workflowData.workflow.title}
+          </Typography>
         </Toolbar>
       </AppBar>
 
       {/* Workflow Visualization */}
       <Box sx={{ flexGrow: 1 }}>
         <WorkflowBuilder 
-          selectedWorkflowId={id || undefined}
-          workflowData={workflowData || undefined}
+          selectedWorkflowId={displayWorkflowId}
+          workflowData={workflowData}
           onWorkflowSelect={handleWorkflowSelect}
         />
       </Box>
