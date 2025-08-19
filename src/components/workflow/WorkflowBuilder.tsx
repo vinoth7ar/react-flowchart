@@ -99,7 +99,7 @@ const WorkflowBuilder = ({
   }, [currentWorkflowData, setEdges]);
 
   return (
-    <div className="flex h-screen w-full bg-gray-100">
+    <div className="flex h-screen w-full bg-workflow-bg">
       {/* Main Canvas */}
       <div className="flex-1 h-full p-2">
         <ReactFlow
@@ -110,7 +110,7 @@ const WorkflowBuilder = ({
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           fitView
-          className="bg-gray-100"
+          className="bg-workflow-canvas"
           defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
           nodesDraggable={true}
           nodesConnectable={true}
