@@ -89,9 +89,9 @@ const WorkflowNode = ({ data }: NodeProps) => {
   const getNodeStyles = () => {
     switch (nodeData.type) {
       case 'workflow':
-        return 'bg-workflow-canvas border-2 border-dashed border-workflow-border rounded-lg min-w-[800px] min-h-[450px] p-6 relative';
+        return 'bg-card border-2 border-dashed border-workflow-border rounded-lg min-w-[800px] min-h-[450px] p-6 relative shadow-sm';
       case 'stage':
-        return 'bg-workflow-node-bg border border-workflow-stage-border rounded-sm p-4 min-w-[240px] min-h-[100px] cursor-pointer hover:shadow-lg transition-all duration-200 shadow-sm';
+        return 'bg-card border border-workflow-stage-border rounded-md p-4 min-w-[240px] min-h-[100px] cursor-pointer hover:shadow-lg transition-all duration-200 shadow-sm';
       case 'data':
         let bgColor = 'bg-workflow-data-bg';
         if (nodeData.color === 'yellow') {
@@ -103,7 +103,7 @@ const WorkflowNode = ({ data }: NodeProps) => {
       case 'process':
         return 'bg-workflow-process-bg text-workflow-process-text border-workflow-stage-border border rounded px-3 py-1 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow';
       case 'entities-group':
-        return 'bg-workflow-node-bg border border-workflow-stage-border rounded-sm p-4 min-w-[520px] cursor-pointer hover:shadow-lg transition-all duration-200 shadow-sm';
+        return 'bg-primary text-primary-foreground border border-primary rounded-md p-4 min-w-[520px] cursor-pointer hover:shadow-lg transition-all duration-200 shadow-sm';
       default:
         return 'bg-workflow-node-bg border-workflow-node-border border rounded p-3 cursor-pointer hover:shadow-md transition-shadow';
     }
@@ -147,7 +147,7 @@ const WorkflowNode = ({ data }: NodeProps) => {
 
     return (
       <div className={getNodeStyles()} onClick={handleClick}>
-        <div className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <div className="text-sm font-bold text-primary-foreground mb-3 flex items-center gap-2">
           <span 
             className="cursor-pointer select-none text-lg leading-none"
             onClick={handleIconClick}
@@ -546,6 +546,8 @@ interface WorkflowBuilderProps {
   onWorkflowSelect?: (workflowId: string) => void;
 }
 
+// MEMOIZED NODE TYPES - Define outside component to prevent re-creation
+// SPLIT TO: src/components/workflow/nodeTypes.ts
 const nodeTypes = {
   workflow: MemoizedWorkflowNode,
   circular: MemoizedCircularNode,
@@ -586,7 +588,7 @@ const WorkflowBuilder = ({
     [setEdges]
   );
 
-  // Handle workflow selection
+  // Handle workflow selection - FIXED for proper navigation
   const handleWorkflowSelect = (workflowId: string) => {
     if (externalOnWorkflowSelect) {
       // Use external handler (for SingleView navigation)
@@ -596,6 +598,10 @@ const WorkflowBuilder = ({
       if (mockWorkflows[workflowId]) {
         setSelectedWorkflowId(workflowId);
         setEntitiesExpanded(false);
+        
+        // Update URL to reflect the change
+        const newUrl = `/visualization/workflow/${workflowId}`;
+        window.history.pushState({}, '', newUrl);
       }
     }
   };
@@ -618,9 +624,9 @@ const WorkflowBuilder = ({
   }, [currentWorkflowData, setEdges]);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen w-full bg-workflow-bg">
       {/* Main Canvas */}
-      <div className="flex-1 p-2">
+      <div className="flex-1 h-full p-2">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -629,7 +635,7 @@ const WorkflowBuilder = ({
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           fitView
-          className="bg-gray-100"
+          className="bg-workflow-canvas rounded-lg"
           defaultViewport={{ x: 0, y: 0, zoom: 0.9 }}
           nodesDraggable={true}
           nodesConnectable={true}
@@ -640,7 +646,7 @@ const WorkflowBuilder = ({
             gap={16}
             size={1}
           />
-          <Controls className="bg-white border border-gray-300 shadow-lg" />
+          <Controls className="bg-card border border-border shadow-lg rounded-lg" />
         </ReactFlow>
       </div>
 
