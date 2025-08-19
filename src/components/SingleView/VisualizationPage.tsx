@@ -102,19 +102,11 @@ export default function VisualizationPage() {
         </div>
       </header>
 
-      {/* Main Content with Sidebar */}
-      <div className="flex flex-1">
-        {/* Workflow Visualization */}
-        <div className="flex-1">
-          <WorkflowBuilder 
-            selectedWorkflowId={id}
-            workflowData={workflowData}
-          />
-        </div>
-
-        {/* Sidebar for switching workflows */}
-        <WorkflowSidebar 
-          selectedWorkflow={id || ''}
+      {/* Workflow Visualization */}
+      <div className="flex-1">
+        <WorkflowBuilder 
+          selectedWorkflowId={id}
+          workflowData={workflowData}
           onWorkflowSelect={handleWorkflowSelect}
         />
       </div>

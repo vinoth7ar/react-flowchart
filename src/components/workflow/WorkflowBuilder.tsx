@@ -24,6 +24,7 @@ interface WorkflowBuilderProps {
   layoutConfig?: typeof defaultLayoutConfig;
   selectedWorkflowId?: string;
   workflowData?: WorkflowData;
+  onWorkflowSelect?: (workflowId: string) => void;
 }
 
 const nodeTypes = {
@@ -38,7 +39,8 @@ const nodeTypes = {
 const WorkflowBuilder = ({ 
   layoutConfig = defaultLayoutConfig,
   selectedWorkflowId: externalWorkflowId,
-  workflowData: externalWorkflowData
+  workflowData: externalWorkflowData,
+  onWorkflowSelect: externalOnWorkflowSelect
 }: WorkflowBuilderProps = {}) => {
   const [selectedWorkflowId, setSelectedWorkflowId] = useState(externalWorkflowId || defaultWorkflow);
   const [entitiesExpanded, setEntitiesExpanded] = useState(false);
@@ -67,9 +69,15 @@ const WorkflowBuilder = ({
 
   // Handle workflow selection
   const handleWorkflowSelect = (workflowId: string) => {
-    if (mockWorkflows[workflowId]) {
-      setSelectedWorkflowId(workflowId);
-      setEntitiesExpanded(false); // Reset entities expansion when switching workflows
+    if (externalOnWorkflowSelect) {
+      // Use external handler (for SingleView navigation)
+      externalOnWorkflowSelect(workflowId);
+    } else {
+      // Use internal state (for standalone usage)
+      if (mockWorkflows[workflowId]) {
+        setSelectedWorkflowId(workflowId);
+        setEntitiesExpanded(false);
+      }
     }
   };
 
