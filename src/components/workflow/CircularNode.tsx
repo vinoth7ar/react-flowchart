@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { Handle, Position, NodeProps } from '@xyflow/react';
+import { Handle, Position } from '@xyflow/react';
+import type { NodeProps } from '@xyflow/react';
 
 export interface CircularNodeData extends Record<string, unknown> {
   label: string;
@@ -7,7 +8,7 @@ export interface CircularNodeData extends Record<string, unknown> {
   color?: string;
 }
 
-const CircularNode = ({ data }: NodeProps) => {
+const CircularNode = ({ data }: NodeProps<CircularNodeData>) => {
   const nodeData = data as CircularNodeData;
   
   const handleClick = () => {

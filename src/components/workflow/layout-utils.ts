@@ -1,4 +1,4 @@
-import { Node } from '@xyflow/react';
+import type { Node as FlowNode } from '@xyflow/react';
 import { WorkflowData, LayoutConfig } from './types';
 import { WorkflowNodeData } from './WorkflowNode';
 import { CircularNodeData } from './CircularNode';
@@ -55,8 +55,8 @@ export const createDynamicNodes = (
   entitiesExpanded: boolean,
   onToggleEntities: () => void,
   config: LayoutConfig = defaultLayoutConfig
-): Node[] => {
-  const nodes: Node[] = [];
+): FlowNode[] => {
+  const nodes: FlowNode[] = [];
   const layout = calculateDynamicLayout(workflowData, config);
 
   // PMF Tag (outside workflow)

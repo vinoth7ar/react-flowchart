@@ -13,13 +13,10 @@ import {
   Background,
   useNodesState,
   useEdgesState,
-  Connection,
-  Edge,
-  Node,
   Handle,
   Position,
-  NodeProps,
 } from '@xyflow/react';
+import type { Connection, Edge as FlowEdge, Node as FlowNode, NodeProps } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import {
   Button,
@@ -84,7 +81,7 @@ export interface CircularNodeData extends Record<string, unknown> {
 // WORKFLOW NODE COMPONENT (from WorkflowNode.tsx)
 // SPLIT TO: src/components/workflow/WorkflowNode.tsx
 // ===========================================
-const WorkflowNode = ({ data }: NodeProps) => {
+const WorkflowNode = ({ data }: NodeProps<WorkflowNodeData>) => {
   const nodeData = data as WorkflowNodeData;
   const getNodeStyles = () => {
     switch (nodeData.type) {
@@ -222,7 +219,7 @@ const MemoizedWorkflowNode = memo(WorkflowNode);
 // CIRCULAR NODE COMPONENT (from CircularNode.tsx)
 // SPLIT TO: src/components/workflow/CircularNode.tsx
 // ===========================================
-const CircularNode = ({ data }: NodeProps) => {
+const CircularNode = ({ data }: NodeProps<CircularNodeData>) => {
   const nodeData = data as CircularNodeData;
   
   const handleClick = () => {
@@ -309,8 +306,8 @@ export const createDynamicNodes = (
   entitiesExpanded: boolean,
   onToggleEntities: () => void,
   config: LayoutConfig = defaultLayoutConfig
-): Node[] => {
-  const nodes: Node[] = [];
+): FlowNode[] => {
+  const nodes: FlowNode[] = [];
   const layout = calculateDynamicLayout(workflowData, config);
 
   // PMF Tag (outside workflow)
@@ -407,8 +404,8 @@ export const createDynamicNodes = (
 // CONNECTION UTILITIES (from connection-utils.ts)
 // SPLIT TO: src/components/workflow/connection-utils.ts
 // ===========================================
-export const generateIntelligentConnections = (workflowData: WorkflowData): Edge[] => {
-  const edges: Edge[] = [];
+export const generateIntelligentConnections = (workflowData: WorkflowData): FlowEdge[] => {
+  const edges: FlowEdge[] = [];
   const { stages, statusNodes } = workflowData;
 
   // Connect stages to their corresponding status nodes
@@ -448,8 +445,8 @@ export const generateIntelligentConnections = (workflowData: WorkflowData): Edge
 
 export const updateConnectionsForWorkflow = (
   workflowData: WorkflowData,
-  existingEdges: Edge[] = []
-): Edge[] => {
+  existingEdges: FlowEdge[] = []
+): FlowEdge[] => {
   // Generate new intelligent connections
   const newConnections = generateIntelligentConnections(workflowData);
   

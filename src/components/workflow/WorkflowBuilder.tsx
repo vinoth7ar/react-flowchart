@@ -6,10 +6,8 @@ import {
   Background,
   useNodesState,
   useEdgesState,
-  Connection,
-  Edge,
-  Node,
 } from '@xyflow/react';
+import type { Connection } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import WorkflowNode, { WorkflowNodeData } from './WorkflowNode';

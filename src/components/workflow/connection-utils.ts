@@ -1,8 +1,8 @@
-import { Edge } from '@xyflow/react';
+import type { Edge as FlowEdge } from '@xyflow/react';
 import { WorkflowData } from './types';
 
-export const generateIntelligentConnections = (workflowData: WorkflowData): Edge[] => {
-  const edges: Edge[] = [];
+export const generateIntelligentConnections = (workflowData: WorkflowData): FlowEdge[] => {
+  const edges: FlowEdge[] = [];
   const { stages, statusNodes } = workflowData;
 
   // Connect stages to their corresponding status nodes
@@ -42,8 +42,8 @@ export const generateIntelligentConnections = (workflowData: WorkflowData): Edge
 
 export const updateConnectionsForWorkflow = (
   workflowData: WorkflowData,
-  existingEdges: Edge[] = []
-): Edge[] => {
+  existingEdges: FlowEdge[] = []
+): FlowEdge[] => {
   // Generate new intelligent connections
   const newConnections = generateIntelligentConnections(workflowData);
   
