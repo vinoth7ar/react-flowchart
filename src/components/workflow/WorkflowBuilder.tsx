@@ -20,6 +20,12 @@ import { WorkflowData } from './types';
 import { createDynamicNodes, defaultLayoutConfig } from './layout-utils';
 import { updateConnectionsForWorkflow } from './connection-utils';
 
+interface WorkflowBuilderProps {
+  layoutConfig?: typeof defaultLayoutConfig;
+  selectedWorkflowId?: string;
+  workflowData?: WorkflowData;
+}
+
 const nodeTypes = {
   workflow: WorkflowNode,
   circular: CircularNode,
@@ -30,13 +36,17 @@ const nodeTypes = {
 };
 
 const WorkflowBuilder = ({ 
-  layoutConfig = defaultLayoutConfig 
-}: { layoutConfig?: typeof defaultLayoutConfig } = {}) => {
-  const [selectedWorkflowId, setSelectedWorkflowId] = useState(defaultWorkflow);
+  layoutConfig = defaultLayoutConfig,
+  selectedWorkflowId: externalWorkflowId,
+  workflowData: externalWorkflowData
+}: WorkflowBuilderProps = {}) => {
+  const [selectedWorkflowId, setSelectedWorkflowId] = useState(externalWorkflowId || defaultWorkflow);
   const [entitiesExpanded, setEntitiesExpanded] = useState(false);
   
-  // Get current workflow data
-  const currentWorkflowData = mockWorkflows[selectedWorkflowId] || mockWorkflows[defaultWorkflow];
+  // Get current workflow data - prefer external data, fallback to mock data
+  const currentWorkflowData = externalWorkflowData || 
+                              mockWorkflows[selectedWorkflowId] || 
+                              mockWorkflows[defaultWorkflow];
   
   // Create initial nodes and edges dynamically
   const initialNodes = createDynamicNodes(
