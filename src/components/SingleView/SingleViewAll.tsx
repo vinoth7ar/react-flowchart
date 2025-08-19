@@ -1,18 +1,40 @@
 // ============================================================================
-// SINGLE VIEW - ALL IN ONE FILE
+// SINGLE VIEW - ALL IN ONE FILE (Material UI Version)
 // ============================================================================
-// This file contains the complete SingleView functionality.
+// This file contains the complete SingleView functionality using only Material UI components.
 // It can be split into separate files later using the comment sections below.
 
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Eye, ArrowLeft, Settings, ArrowRight } from 'lucide-react';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Chip,
+  Switch,
+  FormControlLabel,
+  Divider,
+  Container,
+  Box,
+  Paper,
+  Grid,
+  IconButton,
+  Tabs,
+  Tab,
+  AppBar,
+  Toolbar,
+  Stack
+} from '@mui/material';
+import {
+  Visibility,
+  ArrowBack,
+  Settings,
+  ArrowForward,
+  AccountTree,
+  Business
+} from '@mui/icons-material';
 import { mockWorkflows } from '@/components/workflow/mock-data';
 import { WorkflowData, LayoutConfig } from '@/components/workflow/types';
 import WorkflowBuilder from '@/components/workflow/WorkflowBuilder';
@@ -272,42 +294,52 @@ interface WorkflowSelectorProps {
 
 function WorkflowSelector({ workflows, selectedId, onSelect }: WorkflowSelectorProps) {
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Workflows</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          Choose up to one workflow to visualize (MVP)
-        </p>
-      </div>
+    <Box sx={{ mb: 3 }}>
+      <Typography variant="h6" gutterBottom>
+        Workflows
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        Choose up to one workflow to visualize (MVP)
+      </Typography>
       
-      <div className="grid gap-3">
+      <Stack spacing={2}>
         {workflows.map((workflow) => (
-          <Card 
+          <Paper
             key={workflow.id}
-            className={`cursor-pointer transition-all hover:shadow-md ${
-              selectedId === workflow.id 
-                ? 'ring-2 ring-primary border-primary' 
-                : 'border-border hover:border-muted-foreground'
-            }`}
+            sx={{
+              p: 2,
+              cursor: 'pointer',
+              border: selectedId === workflow.id ? 2 : 1,
+              borderColor: selectedId === workflow.id ? 'primary.main' : 'divider',
+              '&:hover': {
+                boxShadow: 2,
+                borderColor: 'text.secondary'
+              }
+            }}
             onClick={() => onSelect(workflow.id)}
           >
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base">{workflow.title}</CardTitle>
-                <div className={`w-4 h-4 rounded-full border-2 ${
-                  selectedId === workflow.id 
-                    ? 'bg-primary border-primary' 
-                    : 'border-muted-foreground'
-                }`} />
-              </div>
-              <CardDescription className="text-sm">
-                {workflow.description}
-              </CardDescription>
-            </CardHeader>
-          </Card>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+              <Typography variant="subtitle1" fontWeight="medium">
+                {workflow.title}
+              </Typography>
+              <Box 
+                sx={{
+                  width: 16,
+                  height: 16,
+                  borderRadius: '50%',
+                  border: 2,
+                  borderColor: selectedId === workflow.id ? 'primary.main' : 'text.disabled',
+                  backgroundColor: selectedId === workflow.id ? 'primary.main' : 'transparent'
+                }}
+              />
+            </Box>
+            <Typography variant="body2" color="text.secondary">
+              {workflow.description}
+            </Typography>
+          </Paper>
         ))}
-      </div>
-    </div>
+      </Stack>
+    </Box>
   );
 }
 
@@ -323,55 +355,61 @@ interface EntitySelectorProps {
 
 function EntitySelector({ entities, selectedId, onSelect }: EntitySelectorProps) {
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Entities</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          Choose up to one entity to visualize (MVP)
-        </p>
-      </div>
+    <Box sx={{ mb: 3 }}>
+      <Typography variant="h6" gutterBottom>
+        Entities
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        Choose up to one entity to visualize (MVP)
+      </Typography>
       
       {entities.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-8">
-            <div className="text-center">
-              <Badge variant="secondary" className="mb-2">Coming Soon</Badge>
-              <p className="text-sm text-muted-foreground">
-                Entity visualization will be available in a future release
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <Paper sx={{ p: 4, textAlign: 'center', border: '2px dashed', borderColor: 'divider' }}>
+          <Chip label="Coming Soon" color="secondary" sx={{ mb: 2 }} />
+          <Typography variant="body2" color="text.secondary">
+            Entity visualization will be available in a future release
+          </Typography>
+        </Paper>
       ) : (
-        <div className="grid gap-3">
+        <Stack spacing={2}>
           {entities.map((entity) => (
-            <Card 
+            <Paper
               key={entity.id}
-              className={`cursor-pointer transition-all hover:shadow-md ${
-                selectedId === entity.id 
-                  ? 'ring-2 ring-primary border-primary' 
-                  : 'border-border hover:border-muted-foreground'
-              }`}
+              sx={{
+                p: 2,
+                cursor: 'pointer',
+                border: selectedId === entity.id ? 2 : 1,
+                borderColor: selectedId === entity.id ? 'primary.main' : 'divider',
+                '&:hover': {
+                  boxShadow: 2,
+                  borderColor: 'text.secondary'
+                }
+              }}
               onClick={() => onSelect(entity.id)}
             >
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">{entity.title}</CardTitle>
-                  <div className={`w-4 h-4 rounded-full border-2 ${
-                    selectedId === entity.id 
-                      ? 'bg-primary border-primary' 
-                      : 'border-muted-foreground'
-                  }`} />
-                </div>
-                <CardDescription className="text-sm">
-                  {entity.description}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                <Typography variant="subtitle1" fontWeight="medium">
+                  {entity.title}
+                </Typography>
+                <Box 
+                  sx={{
+                    width: 16,
+                    height: 16,
+                    borderRadius: '50%',
+                    border: 2,
+                    borderColor: selectedId === entity.id ? 'primary.main' : 'text.disabled',
+                    backgroundColor: selectedId === entity.id ? 'primary.main' : 'transparent'
+                  }}
+                />
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                {entity.description}
+              </Typography>
+            </Paper>
           ))}
-        </div>
+        </Stack>
       )}
-    </div>
+    </Box>
   );
 }
 
@@ -388,61 +426,103 @@ function CustomizationPanel({ customizations, onUpdate }: CustomizationPanelProp
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Customize View</CardTitle>
-        <CardDescription>
+        <Typography variant="h6">Customize View</Typography>
+        <Typography variant="body2" color="text.secondary">
           Configure how the workflow visualization will appear
-        </CardDescription>
+        </Typography>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <Label htmlFor="expand-entities" className="text-sm font-medium">
-              Expand All Entities
-            </Label>
-            <p className="text-xs text-muted-foreground">
-              Show all entity details by default
-            </p>
-          </div>
-          <Switch
-            id="expand-entities"
-            checked={customizations.expandAllEntities}
-            onCheckedChange={(checked) => onUpdate({ expandAllEntities: checked })}
-          />
-        </div>
+      <CardContent>
+        <Stack spacing={3}>
+          <Box>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={customizations.expandAllEntities}
+                  onChange={(e) => onUpdate({ expandAllEntities: e.target.checked })}
+                />
+              }
+              label={
+                <Box>
+                  <Typography variant="body2" fontWeight="medium">
+                    Expand All Entities
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Show all entity details by default
+                  </Typography>
+                </Box>
+              }
+            />
+          </Box>
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <Label htmlFor="show-legend" className="text-sm font-medium">
-              Show Legend
-            </Label>
-            <p className="text-xs text-muted-foreground">
-              Display legend panel in the visualization
-            </p>
-          </div>
-          <Switch
-            id="show-legend"
-            checked={customizations.showLegend}
-            onCheckedChange={(checked) => onUpdate({ showLegend: checked })}
-          />
-        </div>
+          <Box>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={customizations.showLegend}
+                  onChange={(e) => onUpdate({ showLegend: e.target.checked })}
+                />
+              }
+              label={
+                <Box>
+                  <Typography variant="body2" fontWeight="medium">
+                    Show Legend
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Display legend panel in the visualization
+                  </Typography>
+                </Box>
+              }
+            />
+          </Box>
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <Label htmlFor="show-minimap" className="text-sm font-medium">
-              Show Mini Map
-            </Label>
-            <p className="text-xs text-muted-foreground">
-              Display navigation mini map
-            </p>
-          </div>
-          <Switch
-            id="show-minimap"
-            checked={customizations.showMiniMap}
-            onCheckedChange={(checked) => onUpdate({ showMiniMap: checked })}
-          />
-        </div>
+          <Box>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={customizations.showMiniMap}
+                  onChange={(e) => onUpdate({ showMiniMap: e.target.checked })}
+                />
+              }
+              label={
+                <Box>
+                  <Typography variant="body2" fontWeight="medium">
+                    Show Mini Map
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Display navigation mini map
+                  </Typography>
+                </Box>
+              }
+            />
+          </Box>
+        </Stack>
       </CardContent>
     </Card>
+  );
+}
+
+// Custom TabPanel component for Material UI Tabs
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel({ children, value, index, ...other }: TabPanelProps) {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
   );
 }
 
@@ -454,16 +534,16 @@ export function SelectionPage() {
   const navigate = useNavigate();
   const { selection, updateSelection, updateCustomizations } = useSelection();
   const { workflows, entities } = useAvailableOptions();
-  const [activeTab, setActiveTab] = useState<'workflows' | 'entities'>('workflows');
+  const [activeTab, setActiveTab] = useState(0);
 
   const handleWorkflowSelect = (id: string) => {
     updateSelection('workflow', id);
-    setActiveTab('workflows');
+    setActiveTab(0);
   };
 
   const handleEntitySelect = (id: string) => {
     updateSelection('entity', id);
-    setActiveTab('entities');
+    setActiveTab(1);
   };
 
   const handleVisualize = () => {
@@ -475,77 +555,69 @@ export function SelectionPage() {
   const canVisualize = selection.selectedType && selection.selectedId;
 
   return (
-    <div className="min-h-screen bg-background">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/')}
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold">Pipeline Management Framework</h1>
-                <p className="text-sm text-muted-foreground">
-                  Select a workflow or entity to visualize
-                </p>
-              </div>
-            </div>
-            <Button 
-              onClick={handleVisualize}
-              disabled={!canVisualize}
-              className="gap-2"
-              size="lg"
-            >
-              <Eye className="h-4 w-4" />
-              Visualize
-            </Button>
-          </div>
-        </div>
-      </header>
+      <AppBar position="static" color="transparent" elevation={1}>
+        <Toolbar>
+          <Button
+            startIcon={<ArrowBack />}
+            onClick={() => navigate('/')}
+            sx={{ mr: 2 }}
+          >
+            Back
+          </Button>
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="h5" fontWeight="bold">
+              Pipeline Management Framework
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Select a workflow or entity to visualize
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            startIcon={<Visibility />}
+            onClick={handleVisualize}
+            disabled={!canVisualize}
+            size="large"
+          >
+            Visualize
+          </Button>
+        </Toolbar>
+      </AppBar>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <Container maxWidth="xl" sx={{ py: 4 }}>
+        <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', lg: 'row' } }}>
           {/* Selection Panel */}
-          <div className="lg:col-span-2">
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'workflows' | 'entities')}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="workflows">
-                  Workflows ({workflows.length})
-                </TabsTrigger>
-                <TabsTrigger value="entities">
-                  Entities ({entities.length})
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="workflows" className="mt-6">
-                <WorkflowSelector
-                  workflows={workflows}
-                  selectedId={selection.selectedType === 'workflow' ? selection.selectedId : null}
-                  onSelect={handleWorkflowSelect}
-                />
-              </TabsContent>
-              
-              <TabsContent value="entities" className="mt-6">
-                <EntitySelector
-                  entities={entities}
-                  selectedId={selection.selectedType === 'entity' ? selection.selectedId : null}
-                  onSelect={handleEntitySelect}
-                />
-              </TabsContent>
-            </Tabs>
-          </div>
+          <Box sx={{ flex: '1 1 66%' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)}>
+                <Tab label={`Workflows (${workflows.length})`} />
+                <Tab label={`Entities (${entities.length})`} />
+              </Tabs>
+            </Box>
+            
+            <TabPanel value={activeTab} index={0}>
+              <WorkflowSelector
+                workflows={workflows}
+                selectedId={selection.selectedType === 'workflow' ? selection.selectedId : null}
+                onSelect={handleWorkflowSelect}
+              />
+            </TabPanel>
+            
+            <TabPanel value={activeTab} index={1}>
+              <EntitySelector
+                entities={entities}
+                selectedId={selection.selectedType === 'entity' ? selection.selectedId : null}
+                onSelect={handleEntitySelect}
+              />
+            </TabPanel>
+          </Box>
 
           {/* Customization Panel */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
+          <Box sx={{ flex: '1 1 33%' }}>
+            <Box sx={{ position: 'sticky', top: 32 }}>
               <CustomizationPanel
                 customizations={selection.customizations}
                 onUpdate={updateCustomizations}
@@ -553,22 +625,26 @@ export function SelectionPage() {
               
               {/* Selection Summary */}
               {canVisualize && (
-                <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                  <h4 className="font-semibold text-sm mb-2">Selected for Visualization:</h4>
-                  <p className="text-sm">
-                    <span className="capitalize">{selection.selectedType}:</span>{' '}
+                <Paper sx={{ mt: 3, p: 2, bgcolor: 'primary.50', border: 1, borderColor: 'primary.200' }}>
+                  <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1 }}>
+                    Selected for Visualization:
+                  </Typography>
+                  <Typography variant="body2">
+                    <Box component="span" sx={{ textTransform: 'capitalize' }}>
+                      {selection.selectedType}:
+                    </Box>{' '}
                     {selection.selectedType === 'workflow' 
                       ? workflows.find(w => w.id === selection.selectedId)?.title
                       : entities.find(e => e.id === selection.selectedId)?.title
                     }
-                  </p>
-                </div>
+                  </Typography>
+                </Paper>
               )}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+            </Box>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 }
 
@@ -605,85 +681,79 @@ export function VisualizationPage() {
   // Handle missing data
   if (!type || !id) {
     return (
-      <div className="h-screen flex items-center justify-center bg-workflow-bg">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Invalid URL</h2>
-          <p className="text-muted-foreground mb-4">
+      <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
+            Invalid URL
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
             Please select a workflow or entity to visualize
-          </p>
-          <Button onClick={() => navigate('/selection')}>
+          </Typography>
+          <Button variant="contained" onClick={() => navigate('/selection')}>
             Go to Selection
           </Button>
-        </div>
-      </div>
+        </Paper>
+      </Box>
     );
   }
 
   if (!workflowData) {
     return (
-      <div className="h-screen flex items-center justify-center bg-workflow-bg">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">
+      <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
             {type === 'workflow' ? 'Workflow' : 'Entity'} Not Found
-          </h2>
-          <p className="text-muted-foreground mb-4">
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
             The {type} "{id}" could not be loaded
-          </p>
-          <Button onClick={() => navigate('/selection')}>
+          </Typography>
+          <Button variant="contained" onClick={() => navigate('/selection')}>
             Back to Selection
           </Button>
-        </div>
-      </div>
+        </Paper>
+      </Box>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col bg-workflow-bg">
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Enhanced Header with Navigation */}
-      <header className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/selection')}
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Selection
-              </Button>
-              <div>
-                <h1 className="text-lg font-semibold">
-                  {workflowData.workflow.title}
-                </h1>
-                <p className="text-xs text-muted-foreground">
-                  {type === 'workflow' ? 'Workflow' : 'Entity'} Visualization
-                </p>
-              </div>
-            </div>
-            <Button 
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/selection')}
-              className="gap-2"
-            >
-              <Settings className="h-4 w-4" />
-              Change Selection
-            </Button>
-          </div>
-        </div>
-      </header>
+      <AppBar position="static" color="transparent" elevation={1}>
+        <Toolbar>
+          <Button
+            startIcon={<ArrowBack />}
+            onClick={() => navigate('/selection')}
+            sx={{ mr: 2 }}
+          >
+            Back to Selection
+          </Button>
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="h6" fontWeight="bold">
+              {workflowData.workflow.title}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {type === 'workflow' ? 'Workflow' : 'Entity'} Visualization
+            </Typography>
+          </Box>
+          <Button
+            variant="outlined"
+            startIcon={<Settings />}
+            onClick={() => navigate('/selection')}
+          >
+            Change Selection
+          </Button>
+        </Toolbar>
+      </AppBar>
 
       {/* Workflow Visualization */}
-      <div className="flex-1">
+      <Box sx={{ flexGrow: 1 }}>
         <WorkflowBuilder 
           selectedWorkflowId={id || undefined}
           workflowData={workflowData || undefined}
           onWorkflowSelect={handleWorkflowSelect}
         />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
@@ -695,48 +765,47 @@ export function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen flex flex-col bg-workflow-bg">
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Hero Section */}
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center max-w-2xl mx-auto px-4">
-          <h1 className="text-4xl font-bold tracking-tight mb-4">
-            Pipeline Management Framework
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8">
-            Visualize and manage your workflows and entities with our intuitive single-view system
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={() => navigate('/selection')}
-              className="gap-2"
-            >
-              <Eye className="h-5 w-5" />
-              Start Visualization
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+      <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Container maxWidth="md">
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h2" fontWeight="bold" sx={{ mb: 2 }}>
+              Pipeline Management Framework
+            </Typography>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
+              Visualize and manage your workflows and entities with our intuitive single-view system
+            </Typography>
             
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={() => navigate('/selection')}
-              className="gap-2"
-            >
-              <Settings className="h-5 w-5" />
-              Configure & Select
-            </Button>
-          </div>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 6 }}>
+              <Button 
+                variant="contained"
+                size="large"
+                startIcon={<Visibility />}
+                endIcon={<ArrowForward />}
+                onClick={() => navigate('/selection')}
+              >
+                Start Visualization
+              </Button>
+              
+              <Button 
+                variant="outlined"
+                size="large"
+                startIcon={<Settings />}
+                onClick={() => navigate('/selection')}
+              >
+                Configure & Select
+              </Button>
+            </Stack>
 
-          <div className="mt-12 text-sm text-muted-foreground">
-            <p>
+            <Typography variant="body2" color="text.secondary">
               Choose from available workflows and entities • Customize your view • 
               Visualize with interactive React Flow
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Typography>
+          </Box>
+        </Container>
+      </Box>
+    </Box>
   );
 }
 
@@ -746,46 +815,3 @@ export function LandingPage() {
 
 // Functions and components are already exported inline above
 // No need for duplicate exports here
-
-// ============================================================================
-// SPLITTING GUIDE
-// ============================================================================
-/*
-TO SPLIT THIS FILE INTO SEPARATE FILES:
-
-1. TYPES:
-   - Copy the "TYPES SECTION" to: src/components/SingleView/types.ts
-
-2. CONTEXT:
-   - Copy the "CONTEXT SECTION" to: src/components/SingleView/context/SelectionContext.tsx
-
-3. HOOKS:
-   - Copy the "HOOKS SECTION" to: src/components/SingleView/hooks/useWorkflowData.ts
-
-4. API SERVICE:
-   - Copy the "API SERVICE SECTION" to: src/components/SingleView/services/WorkflowAPI.ts
-
-5. COMPONENTS:
-   - Copy "WORKFLOW SELECTOR COMPONENT" to: src/components/SingleView/components/WorkflowSelector.tsx
-   - Copy "ENTITY SELECTOR COMPONENT" to: src/components/SingleView/components/EntitySelector.tsx
-   - Copy "CUSTOMIZATION PANEL COMPONENT" to: src/components/SingleView/components/CustomizationPanel.tsx
-
-6. PAGES:
-   - Copy "SELECTION PAGE COMPONENT" to: src/components/SingleView/SelectionPage.tsx
-   - Copy "VISUALIZATION PAGE COMPONENT" to: src/components/SingleView/VisualizationPage.tsx
-   - Copy "LANDING PAGE COMPONENT" to: src/pages/Index.tsx (or keep in main pages folder)
-
-7. INDEX FILE:
-   - Copy "MAIN EXPORTS" to: src/components/SingleView/index.tsx
-   - Add proper imports for all the split files
-
-8. UPDATE IMPORTS:
-   - Update App.tsx to import from the new index file
-   - Update any other files that import from this single file
-
-REMEMBER TO:
-- Add proper imports to each split file
-- Export components/functions from each file
-- Update the index.tsx to re-export everything
-- Test that everything still works after splitting
-*/
