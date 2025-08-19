@@ -29,35 +29,35 @@ const nodeTypes = {
 const mockWorkflowData = {
   workflow: {
     id: 'main-workflow',
-    title: 'Hypo Loan Base Price',
+    title: 'Hypo Loan Position',
     description: 'Workflow description',
   },
   stages: [
     {
       id: 'stage-node',
       title: 'Stage',
-      description: 'Base price data staging.',
+      description: 'PLMF stages commitment data in PMF database.',
       position: { x: 30, y: 70 },
       color: 'gray',
     },
     {
       id: 'enrich-node', 
       title: 'Enrich',
-      description: 'Enriching base price details.',
+      description: 'PMF enriches hypo loan positions.',
       position: { x: 320, y: 70 },
       color: 'gray',
     }
   ],
   statusNodes: [
     {
-      id: 'base-staged-circle',
-      label: 'base staged',
+      id: 'staged-circle',
+      label: 'staged',
       position: { x: 105, y: 200 },
       color: 'gray',
     },
     {
-      id: 'base-price-set-circle',
-      label: 'base price set',
+      id: 'position-created-circle',
+      label: 'position created',
       position: { x: 395, y: 200 },
       color: 'gray',
     }
@@ -66,7 +66,7 @@ const mockWorkflowData = {
     {
       id: 'data-entity-1',
       title: 'Hypo Loan Position',
-      color: 'gray',
+      color: 'yellow',
     },
     {
       id: 'data-entity-2', 
@@ -76,7 +76,7 @@ const mockWorkflowData = {
     {
       id: 'data-entity-3',
       title: 'Hypo Loan Base Price',
-      color: 'yellow',
+      color: 'gray',
     }
   ]
 };
@@ -157,14 +157,14 @@ const initialEdges: Edge[] = [
   {
     id: 'stage-to-staged',
     source: 'stage-node',
-    target: 'base-staged-circle',
+    target: 'staged-circle',
     style: { stroke: '#000', strokeWidth: 1 },
     type: 'smoothstep',
   },
   {
-    id: 'enrich-to-set',
+    id: 'enrich-to-created',
     source: 'enrich-node',
-    target: 'base-price-set-circle',
+    target: 'position-created-circle',
     style: { stroke: '#000', strokeWidth: 1 },
     type: 'smoothstep',
   },
