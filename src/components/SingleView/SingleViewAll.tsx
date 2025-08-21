@@ -6,15 +6,20 @@
 
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import WorkflowBuilder from '@/components/workflow/WorkflowBuilder';
 import { mockWorkflows } from '@/components/workflow/mock-data';
 import type { WorkflowData } from '@/components/workflow/types';
-import CollapsibleWorkflowSidebar from '@/components/workflow/CollapsibleWorkflowSidebar';
-import SingleViewVisualization from '@/components/workflow/SingleViewVisualization';
 import {
   Button,
   Typography,
+  Chip,
+  Switch,
+  FormControlLabel,
   Container,
   Box,
+  Paper,
+  AppBar,
+  Toolbar,
   Stack
 } from '@mui/material';
 import {
@@ -204,28 +209,63 @@ export class WorkflowAPI {
 // ============================================================================
 
 export function VisualizationPage() {
+  console.log('VisualizationPage component starting...');
   const { type, id } = useParams<{ type: string; id: string }>();
   const navigate = useNavigate();
   
   // Default to first workflow if no URL params
   const workflowId = id || 'workflow-1';
+  const availableWorkflows = useAvailableWorkflows();
+  
+  // Get workflow data - use default workflow if no URL params
+  const workflowData = useWorkflowData(
+    'workflow', 
+    workflowId
+  ) || mockWorkflows[workflowId];
 
   // Handle workflow switching from sidebar
   const handleWorkflowSelect = (workflowId: string) => {
     navigate(`/visualization/workflow/${workflowId}`);
   };
 
-  return (
-    <div className="h-screen flex bg-workflow-bg">
-      {/* Collapsible Sidebar */}
-      <CollapsibleWorkflowSidebar
-        selectedWorkflow={workflowId}
-        onWorkflowSelect={handleWorkflowSelect}
-      />
+  // Display the workflow visualization directly
+  const displayWorkflowId = workflowId;
 
-      {/* Main Visualization Content */}
-      <SingleViewVisualization workflowId={workflowId} />
-    </div>
+  if (!workflowData) {
+    return (
+      <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
+            Workflow Not Found
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            The workflow "{displayWorkflowId}" could not be loaded
+          </Typography>
+        </Paper>
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Enhanced Header */}
+      <AppBar position="static" color="transparent" elevation={1}>
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Workflow Visualization - {workflowData.workflow.title}
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      {/* Workflow Visualization */}
+      <Box sx={{ flexGrow: 1 }}>
+        <WorkflowBuilder 
+          selectedWorkflowId={displayWorkflowId}
+          workflowData={workflowData}
+          onWorkflowSelect={handleWorkflowSelect}
+        />
+      </Box>
+    </Box>
   );
 }
 
