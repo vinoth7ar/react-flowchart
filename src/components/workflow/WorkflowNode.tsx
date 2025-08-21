@@ -20,9 +20,9 @@ const WorkflowNode = ({ data }: NodeProps) => {
   const getNodeStyles = () => {
     switch (nodeData.type) {
       case 'workflow':
-        return 'bg-workflow-canvas border-2 border-dashed border-workflow-border rounded-lg min-w-[800px] min-h-[450px] p-6 relative';
+        return 'bg-card border-2 border-dashed border-workflow-border rounded-lg min-w-[800px] min-h-[450px] p-6 relative shadow-sm';
       case 'stage':
-        return 'bg-workflow-node-bg border border-workflow-stage-border rounded-sm p-4 min-w-[240px] min-h-[100px] cursor-pointer hover:shadow-lg transition-all duration-200 shadow-sm';
+        return 'bg-card border border-workflow-stage-border rounded-md p-4 min-w-[240px] min-h-[100px] cursor-pointer hover:shadow-lg transition-all duration-200 shadow-sm';
       case 'data':
         let bgColor = 'bg-workflow-data-bg';
         if (nodeData.color === 'yellow') {
@@ -34,7 +34,7 @@ const WorkflowNode = ({ data }: NodeProps) => {
       case 'process':
         return 'bg-workflow-process-bg text-workflow-process-text border-workflow-stage-border border rounded px-3 py-1 text-sm font-medium cursor-pointer hover:shadow-md transition-shadow';
       case 'entities-group':
-        return 'bg-workflow-node-bg border border-workflow-stage-border rounded-sm p-4 min-w-[520px] cursor-pointer hover:shadow-lg transition-all duration-200 shadow-sm';
+        return 'bg-primary text-primary-foreground border border-primary rounded-md p-4 min-w-[520px] cursor-pointer hover:shadow-lg transition-all duration-200 shadow-sm';
       default:
         return 'bg-workflow-node-bg border-workflow-node-border border rounded p-3 cursor-pointer hover:shadow-md transition-shadow';
     }
@@ -78,7 +78,7 @@ const WorkflowNode = ({ data }: NodeProps) => {
 
     return (
       <div className={getNodeStyles()} onClick={handleClick}>
-        <div className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <div className="text-sm font-bold text-primary-foreground mb-3 flex items-center gap-2">
           <span 
             className="cursor-pointer select-none text-lg leading-none"
             onClick={handleIconClick}
