@@ -7,7 +7,7 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import WorkflowBuilder from '@/components/workflow/WorkflowBuilder';
-import { mockWorkflows } from '@/components/workflow/mock-data';
+import { useWorkflowData as useWorkflowService } from '@/hooks/useWorkflowData';
 import type { WorkflowData } from '@/components/workflow/types';
 import {
   Button,
@@ -55,30 +55,16 @@ export interface WorkflowOption {
 // HOOKS SECTION
 // ============================================================================
 
-// Backend integration hook
+// Backend integration hook - Updated to use new service layer
 export function useWorkflowData(type: 'workflow' | 'entity' | null, id: string | null): WorkflowData | null {
   const [backendData, setBackendData] = useState<WorkflowData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to fetch from backend
-  const fetchWorkflowFromBackend = async (workflowId: string): Promise<WorkflowData | null> => {
-    try {
-      // TODO: Replace with actual backend API call
-      // const response = await fetch(`/api/workflows/${workflowId}`);
-      // const data = await response.json();
-      // return data;
-      
-      // For now, simulate backend delay and return mock data
-      await new Promise(resolve => setTimeout(resolve, 100));
-      return mockWorkflows[workflowId] || null;
-    } catch (err) {
-      console.error('Failed to fetch workflow from backend:', err);
-      return null;
-    }
-  };
+  // Use the new service layer
+  const { selectedWorkflow, availableWorkflows } = useWorkflowService(id);
 
-  // Effect to load data when type/id changes
+  // Effect to update backend data when service data changes
   useEffect(() => {
     if (!type || !id) {
       setBackendData(null);
@@ -88,37 +74,36 @@ export function useWorkflowData(type: 'workflow' | 'entity' | null, id: string |
     setIsLoading(true);
     setError(null);
 
-    fetchWorkflowFromBackend(id)
-      .then(data => {
-        setBackendData(data);
-        if (!data) {
-          setError(`No ${type} found with id: ${id}`);
-        }
-      })
-      .catch(err => {
-        setError(err.message);
+    // Simulate backend delay for compatibility
+    const timer = setTimeout(() => {
+      if (selectedWorkflow) {
+        setBackendData(selectedWorkflow);
+        setError(null);
+      } else {
+        setError(`No ${type} found with id: ${id}`);
         setBackendData(null);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [type, id]);
+      }
+      setIsLoading(false);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [type, id, selectedWorkflow]);
 
   return useMemo(() => {
     if (!type || !id) return null;
-    
-    // Return backend data if available, otherwise fallback to mock data
-    return backendData || mockWorkflows[id] || null;
+    return backendData;
   }, [type, id, backendData]);
 }
 
 export function useAvailableOptions() {
+  const { availableWorkflows } = useWorkflowService();
+  
   return useMemo(() => {
-    // Convert mock workflows to selection options
-    const workflowOptions = Object.entries(mockWorkflows).map(([id, data]) => ({
-      id,
-      title: data.workflow.title,
-      description: data.workflow.description,
+    // Use service layer data
+    const workflowOptions = availableWorkflows.map(workflow => ({
+      id: workflow.id,
+      title: workflow.title,
+      description: workflow.description,
       category: 'workflow' as const,
     }));
 
@@ -130,18 +115,20 @@ export function useAvailableOptions() {
       workflows: workflowOptions,
       entities: entityOptions,
     };
-  }, []);
+  }, [availableWorkflows]);
 }
 
 // Hook to get available workflows for sidebar
 export function useAvailableWorkflows() {
+  const { availableWorkflows } = useWorkflowService();
+  
   return useMemo(() => {
-    return Object.entries(mockWorkflows).map(([id, data]) => ({
-      id,
-      title: data.workflow.title,
-      description: data.workflow.description,
+    return availableWorkflows.map(workflow => ({
+      id: workflow.id,
+      title: workflow.title,
+      description: workflow.description,
     }));
-  }, []);
+  }, [availableWorkflows]);
 }
 
 // ============================================================================
@@ -217,11 +204,11 @@ export function VisualizationPage() {
   const workflowId = id || 'workflow-1';
   const availableWorkflows = useAvailableWorkflows();
   
-  // Get workflow data - use default workflow if no URL params
+  // Get workflow data - use service layer instead of mock data
   const workflowData = useWorkflowData(
     'workflow', 
     workflowId
-  ) || mockWorkflows[workflowId];
+  );
 
   // Handle workflow switching from sidebar
   const handleWorkflowSelect = (workflowId: string) => {

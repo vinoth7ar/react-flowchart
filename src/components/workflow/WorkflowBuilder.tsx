@@ -10,10 +10,10 @@ import {
 import type { Connection } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-import WorkflowNode, { WorkflowNodeData } from './WorkflowNode';
-import CircularNode, { CircularNodeData } from './CircularNode';
+import WorkflowNode from './WorkflowNode';
+import CircularNode from './CircularNode';
 import WorkflowSidebar from './WorkflowSidebar';
-import { mockWorkflows, defaultWorkflow } from './mock-data';
+import { useWorkflowData } from '../../hooks/useWorkflowData';
 import { WorkflowData } from './types';
 import { createDynamicNodes, defaultLayoutConfig } from './layout-utils';
 import { updateConnectionsForWorkflow } from './connection-utils';
@@ -40,22 +40,22 @@ const WorkflowBuilder = ({
   workflowData: externalWorkflowData,
   onWorkflowSelect: externalOnWorkflowSelect
 }: WorkflowBuilderProps = {}) => {
-  const [selectedWorkflowId, setSelectedWorkflowId] = useState(externalWorkflowId || defaultWorkflow);
   const [entitiesExpanded, setEntitiesExpanded] = useState(false);
   
-  // Get current workflow data - prefer external data, fallback to mock data
-  const currentWorkflowData = externalWorkflowData || 
-                              mockWorkflows[selectedWorkflowId] || 
-                              mockWorkflows[defaultWorkflow];
+  // Use the new service layer to get workflow data
+  const { selectedWorkflow, availableWorkflows, isLoading } = useWorkflowData(externalWorkflowId);
+  
+  // Get current workflow data - prefer external data, fallback to service data
+  const currentWorkflowData = externalWorkflowData || selectedWorkflow;
   
   // Create initial nodes and edges dynamically
-  const initialNodes = createDynamicNodes(
+  const initialNodes = currentWorkflowData ? createDynamicNodes(
     currentWorkflowData, 
     entitiesExpanded, 
     () => setEntitiesExpanded(!entitiesExpanded),
     layoutConfig
-  );
-  const initialEdges = updateConnectionsForWorkflow(currentWorkflowData);
+  ) : [];
+  const initialEdges = currentWorkflowData ? updateConnectionsForWorkflow(currentWorkflowData) : [];
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -72,8 +72,8 @@ const WorkflowBuilder = ({
       externalOnWorkflowSelect(workflowId);
     } else {
       // Use internal state (for standalone usage)
-      if (mockWorkflows[workflowId]) {
-        setSelectedWorkflowId(workflowId);
+      const workflowExists = availableWorkflows.some(w => w.id === workflowId);
+      if (workflowExists) {
         setEntitiesExpanded(false);
       }
     }
@@ -81,20 +81,45 @@ const WorkflowBuilder = ({
 
   // Update nodes when entities expansion state changes or workflow changes
   useEffect(() => {
-    const updatedNodes = createDynamicNodes(
-      currentWorkflowData,
-      entitiesExpanded,
-      () => setEntitiesExpanded(!entitiesExpanded),
-      layoutConfig
-    );
-    setNodes(updatedNodes);
+    if (currentWorkflowData) {
+      const updatedNodes = createDynamicNodes(
+        currentWorkflowData,
+        entitiesExpanded,
+        () => setEntitiesExpanded(!entitiesExpanded),
+        layoutConfig
+      );
+      setNodes(updatedNodes);
+    }
   }, [entitiesExpanded, currentWorkflowData, layoutConfig, setNodes]);
 
   // Update connections when workflow data changes
   useEffect(() => {
-    const updatedEdges = updateConnectionsForWorkflow(currentWorkflowData);
-    setEdges(updatedEdges);
+    if (currentWorkflowData) {
+      const updatedEdges = updateConnectionsForWorkflow(currentWorkflowData);
+      setEdges(updatedEdges);
+    }
   }, [currentWorkflowData, setEdges]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full bg-workflow-bg items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+          <p className="text-sm text-muted-foreground">Loading workflow...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentWorkflowData) {
+    return (
+      <div className="flex h-screen w-full bg-workflow-bg items-center justify-center">
+        <div className="text-center">
+          <p className="text-sm text-muted-foreground">No workflow data available</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen w-full bg-workflow-bg">
@@ -125,8 +150,9 @@ const WorkflowBuilder = ({
 
       {/* Sidebar */}
       <WorkflowSidebar 
-        selectedWorkflow={selectedWorkflowId}
+        selectedWorkflow={externalWorkflowId || 'hypo-loan-position'}
         onWorkflowSelect={handleWorkflowSelect}
+        availableWorkflows={availableWorkflows}
       />
     </div>
   );

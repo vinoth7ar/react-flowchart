@@ -1,11 +1,22 @@
 import { Card } from '@/components/ui/card';
 
+interface WorkflowOption {
+  id: string;
+  title: string;
+  description: string;
+}
+
 interface WorkflowSidebarProps {
   selectedWorkflow: string;
   onWorkflowSelect: (workflowId: string) => void;
+  availableWorkflows?: WorkflowOption[];
 }
 
-const WorkflowSidebar = ({ selectedWorkflow, onWorkflowSelect }: WorkflowSidebarProps) => {
+const WorkflowSidebar = ({ 
+  selectedWorkflow, 
+  onWorkflowSelect, 
+  availableWorkflows 
+}: WorkflowSidebarProps) => {
   const legendItems = [
     { color: 'bg-primary', label: 'Application' },
     { color: 'bg-workflow-stage-bg border border-workflow-stage-border', label: 'Workflow' },
@@ -13,11 +24,12 @@ const WorkflowSidebar = ({ selectedWorkflow, onWorkflowSelect }: WorkflowSidebar
     { color: 'bg-workflow-data-bg border border-workflow-data-border', label: 'Data Entity' },
   ];
 
-  const workflows = [
-    { id: 'hypo-loan-position', name: 'Hypo Loan Position' },
-    { id: 'hypo-loan', name: 'Hypo Loan' },
-    { id: 'workflow-1', name: 'Customer Onboarding' },
-    { id: 'workflow-2', name: 'Payment Processing' },
+  // Use provided workflows or fallback to default list
+  const workflows = availableWorkflows || [
+    { id: 'hypo-loan-position', title: 'Hypo Loan Position', description: 'Workflow description' },
+    { id: 'hypo-loan', title: 'Hypo Loan', description: 'Complete loan processing workflow' },
+    { id: 'workflow-1', title: 'Customer Onboarding', description: 'New customer registration workflow' },
+    { id: 'workflow-2', title: 'Payment Processing', description: 'Transaction payment workflow' },
   ];
 
   return (
@@ -61,7 +73,7 @@ const WorkflowSidebar = ({ selectedWorkflow, onWorkflowSelect }: WorkflowSidebar
               }`}
               onClick={() => onWorkflowSelect(workflow.id)}
             >
-              {workflow.name}
+              {workflow.title}
             </div>
           ))}
         </div>
